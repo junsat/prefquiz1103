@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- スマホ対応 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <!-- スマホ対応 -->
   <title>市町村クイズ</title>
   <style>
     body {
@@ -62,21 +62,21 @@
     }
 
     .action {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 14px 40px;
-      font-size: 1.2em;
-      background: #007aff;
-      color: white;
-      border: none;
-      border-radius: 30px;
-      cursor: pointer;
-      z-index: 1000;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 14px 40px;
+    font-size: 1.2em;
+    background: #007aff;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    touch-action: manipulation; /* ← これを追加 */
     }
-
     .action:active {
       background: #005ecb;
     }
@@ -1094,4 +1094,3 @@ startQuiz();
 </script>
 </body>
 </html>
-
