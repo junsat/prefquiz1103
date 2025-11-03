@@ -2,66 +2,107 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- スマホ対応 -->
   <title>市町村クイズ</title>
   <style>
     body {
-      font-family: sans-serif;
-      background: #f0f0f0;
-      padding: 20px;
+      font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+      background: #f5f6fa;
+      padding: 16px;
+      margin: 0;
       text-align: center;
     }
+
+    h1 {
+      font-size: 1.8em;
+      color: #333;
+      margin-bottom: 16px;
+    }
+
+    #typeSelector {
+      margin-bottom: 16px;
+    }
+
+    #typeSelector input[type="checkbox"] {
+      transform: scale(1.5);
+      margin-right: 6px;
+    }
+
+    #typeSelector label {
+      font-size: 1.1em;
+      margin-right: 14px;
+    }
+
     .card {
       background: #fff;
-      border-radius: 10px;
+      border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       padding: 20px;
-      margin: 20px auto;
-      max-width: 300px;
+      margin: 16px auto;
+      max-width: 90%;
+      transition: transform 0.2s ease;
       cursor: pointer;
     }
+
+    .card:active {
+      transform: scale(0.97);
+    }
+
     .name {
-      font-size: 1.4em;
+      font-size: 1.3em;
       font-weight: bold;
     }
+
     .pref {
-    display: none;
-    margin-top: 8px;
-    font-weight: bold;
-    color: #333;
-    }
-    #typeSelector input[type="checkbox"] {
-   transform: scale(1.5); /* 数値を大きくするとさらに拡大できます */
-    margin-right: 8px;
-    }
-    #typeSelector label {
-    font-size: 1.2em;
-    margin-right: 16px;
+      display: none;
+      margin-top: 8px;
+      font-weight: bold;
+      color: #555;
+      font-size: 1.1em;
     }
 
     .action {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 10px 20px;
-    font-size: 1em;
-    background: #0077cc;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    z-index: 1000;
-  }
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 14px 40px;
+      font-size: 1.2em;
+      background: #007aff;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .action:active {
+      background: #005ecb;
+    }
+
+    /* 小さな端末での文字サイズ調整 */
+    @media (max-width: 480px) {
+      h1 { font-size: 1.6em; }
+      .name { font-size: 1.2em; }
+      .pref { font-size: 1em; }
+      .action { font-size: 1.1em; padding: 12px 30px; }
+    }
   </style>
 </head>
 <body>
   <h1>市町村クイズ</h1>
+
   <div id="typeSelector">
-  <label><input type="checkbox" value="city" checked> 市</label>
-  <label><input type="checkbox" value="town"> 町</label>
-  <label><input type="checkbox" value="village"> 村</label>
+    <label><input type="checkbox" value="city" checked> 市</label>
+    <label><input type="checkbox" value="town"> 町</label>
+    <label><input type="checkbox" value="village"> 村</label>
   </div>
-  <div id="quiz"></div>
+
+  <div id="quiz">
+    <!-- JSでカードを追加する部分 -->
+  </div>
+
   <button id="actionBtn" class="action">回答</button>
 
   <script>
@@ -1053,3 +1094,4 @@ startQuiz();
 </script>
 </body>
 </html>
+
