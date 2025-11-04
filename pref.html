@@ -3,79 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>市町村クイズ</title>
-<style>
-  body {
-    font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
-    background: #121212;
-    color: #e5e5e5;
-    padding: 16px;
-    margin: 0;
-    text-align: center;
-    height: 100vh;
-  }
-
-  h1 {
-    font-size: 1.8em;
-    color: #f1f1f1;
-    margin-bottom: 16px;
-  }
-
-  #typeSelector {
-    margin-bottom: 16px;
-  }
-
-  #typeSelector input[type="checkbox"] {
-    transform: scale(1.5);
-    margin-right: 6px;
-  }
-
-  #typeSelector label {
-    font-size: 1.1em;
-    margin-right: 14px;
-    color: #ddd;
-  }
-
-  .card {
-    background: #1e1e1e;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(255,255,255,0.05);
-    padding: 20px;
-    margin: 40px auto;
-    max-width: 90%;
-    transition: background 0.3s ease;
-  }
-
-  .name {
-    font-size: 1.4em;
-    font-weight: bold;
-    color: #fff;
-  }
-
-  .pref {
-    display: none;
-    margin-top: 10px;
-    font-weight: bold;
-    color: #aaa;
-    font-size: 1.1em;
-  }
-
-  @media (max-width: 480px) {
-    h1 { font-size: 1.6em; }
-    .name { font-size: 1.2em; }
-    .pref { font-size: 1em; }
-  }
-</style>
-</head>
-<body>
-  <h1>市町村クイズ</h1>
-
-  <div id="typeSelector">
-    <label><input type="checkbox" value="city" checked> 市</label>
-    <label><input type="checkbox" value="town"> 町</label>
-    <label><input type="checkbox" value="village"> 村</label>
-  </div>
-
-  <div id="quiz"></div>
+<style> body { font-family: "Hiragino Sans", "Yu Gothic", sans-serif; background: #121212; color: #e5e5e5; padding: 16px; margin: 0; text-align: center; } h1 { font-size: 1.8em; color: #f1f1f1; margin-bottom: 16px; } #typeSelector { margin-bottom: 16px; } #typeSelector input[type="checkbox"] { transform: scale(1.5); margin-right: 6px; } #typeSelector label { font-size: 1.1em; margin-right: 14px; color: #ddd; } .card { background: #1e1e1e; border-radius: 12px; box-shadow: 0 4px 10px rgba(255,255,255,0.05); padding: 20px; margin: 16px auto; max-width: 90%; transition: transform 0.2s ease, background 0.3s ease; cursor: pointer; } .card:hover { background: #2a2a2a; } .card:active { transform: scale(0.97); } .name { font-size: 1.3em; font-weight: bold; color: #fff; } .pref { display: none; margin-top: 8px; font-weight: bold; color: #aaa; font-size: 1.1em; } .action { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 14px 40px; font-size: 1.2em; background: #007aff; color: white; border: none; border-radius: 30px; cursor: pointer; z-index: 1000; box-shadow: 0 4px 8px rgba(0,0,0,0.3); touch-action: manipulation; } .action:active { background: #005ecb; } /* 小さな端末での文字サイズ調整 */ @media (max-width: 480px) { h1 { font-size: 1.6em; } .name { font-size: 1.2em; } .pref { font-size: 1em; } .action { font-size: 1.1em; padding: 12px 30px; } } </style> </head> <body> <h1>市町村クイズ</h1> <div id="typeSelector"> <label><input type="checkbox" value="city" checked> 市</label> <label><input type="checkbox" value="town"> 町</label> <label><input type="checkbox" value="village"> 村</label> </div> <div id="quiz"> <!-- JSでカードを追加する部分 --> </div> <button id="actionBtn" class="action">回答</button>
 
   <script>
     const data = [
@@ -1925,79 +1853,82 @@
 
   ];
 
-  // 配列をシャッフル
-  function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
+  return array;
+}
 
-  let shuffledData = [];
-  let currentIndex = 0;
-  let answered = false;
+let shuffledData = [];
+let currentIndex = 0;
+let answered = false;
 
-  const quizContainer = document.getElementById('quiz');
+const quizContainer = document.getElementById('quiz');
+const actionBtn = document.getElementById('actionBtn');
 
-  function getSelectedTypes() {
-    return Array.from(document.querySelectorAll('#typeSelector input:checked')).map(cb => cb.value);
-  }
+// type選択からフィルター
+function getSelectedTypes() {
+  return Array.from(document.querySelectorAll('#typeSelector input:checked')).map(cb => cb.value);
+}
 
-  function getFilteredData() {
-    const selectedTypes = getSelectedTypes();
-    return shuffle(data.filter(item => selectedTypes.includes(item.type)));
-  }
+function getFilteredData() {
+  const selectedTypes = getSelectedTypes();
+  return shuffle(data.filter(item => selectedTypes.includes(item.type)));
+}
 
-  function showQuestion(index) {
-    quizContainer.innerHTML = '';
-    answered = false;
+function showQuestion(index) {
+  quizContainer.innerHTML = '';
+  answered = false;
+  actionBtn.textContent = '回答';
 
-    const item = shuffledData[index];
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
-      <div class="name">${item.name}</div>
-      <div class="pref">${item.pref}</div>
-    `;
-    quizContainer.appendChild(card);
-  }
+  const item = shuffledData[index];
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="name">${item.name}</div>
+    <div class="pref">${item.pref}</div>
+  `;
+  quizContainer.appendChild(card);
+}
 
-  function startQuiz() {
-    shuffledData = getFilteredData();
-    currentIndex = 0;
-    showQuestion(currentIndex);
-  }
+actionBtn.addEventListener('click', () => {
+  const pref = document.querySelector('.pref');
 
-  // 背景全体をクリックして進行
-  document.body.addEventListener('click', (e) => {
-    // チェックボックスやラベルをクリックした場合は無視
-    if (e.target.closest('#typeSelector')) return;
-
-    const pref = document.querySelector('.pref');
-    if (!pref) return;
-
-    if (!answered) {
-      pref.style.display = 'block';
-      answered = true;
+  if (!answered) {
+    pref.style.display = 'block';
+    actionBtn.textContent = '次へ';
+    answered = true;
+  } else {
+    currentIndex++;
+    if (currentIndex < shuffledData.length) {
+      showQuestion(currentIndex);
     } else {
-      currentIndex++;
-      if (currentIndex < shuffledData.length) {
-        showQuestion(currentIndex);
-      } else {
-        quizContainer.innerHTML = '<p>クイズは終了です！</p>';
-      }
+      quizContainer.innerHTML = '<p>クイズは終了です！</p>';
+      actionBtn.style.display = 'none';
     }
-  });
+  }
+});
 
-  // チェックボックス変更で再スタート
-  document.querySelectorAll('#typeSelector input').forEach(cb => {
-    cb.addEventListener('change', () => startQuiz());
+// type選択変更時に再スタート
+document.querySelectorAll('#typeSelector input').forEach(cb => {
+  cb.addEventListener('change', () => {
+    startQuiz();
   });
+});
 
-  startQuiz();
-  </script>
+function startQuiz() {
+  shuffledData = getFilteredData();
+  currentIndex = 0;
+  actionBtn.style.display = 'inline-block';
+  showQuestion(currentIndex);
+}
+
+// 初回表示
+startQuiz();
+
+</script>
 </body>
 </html>
-
-
