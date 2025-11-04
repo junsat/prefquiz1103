@@ -4,64 +4,71 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <!-- スマホ対応 -->
   <title>市町村クイズ</title>
-  <style>
-    body {
-      font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
-      background: #f5f6fa;
-      padding: 16px;
-      margin: 0;
-      text-align: center;
-    }
+ <style>
+  body {
+    font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: #121212;
+    color: #e5e5e5;
+    padding: 16px;
+    margin: 0;
+    text-align: center;
+  }
 
-    h1 {
-      font-size: 1.8em;
-      color: #333;
-      margin-bottom: 16px;
-    }
+  h1 {
+    font-size: 1.8em;
+    color: #f1f1f1;
+    margin-bottom: 16px;
+  }
 
-    #typeSelector {
-      margin-bottom: 16px;
-    }
+  #typeSelector {
+    margin-bottom: 16px;
+  }
 
-    #typeSelector input[type="checkbox"] {
-      transform: scale(1.5);
-      margin-right: 6px;
-    }
+  #typeSelector input[type="checkbox"] {
+    transform: scale(1.5);
+    margin-right: 6px;
+  }
 
-    #typeSelector label {
-      font-size: 1.1em;
-      margin-right: 14px;
-    }
+  #typeSelector label {
+    font-size: 1.1em;
+    margin-right: 14px;
+    color: #ddd;
+  }
 
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      padding: 20px;
-      margin: 16px auto;
-      max-width: 90%;
-      transition: transform 0.2s ease;
-      cursor: pointer;
-    }
+  .card {
+    background: #1e1e1e;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(255,255,255,0.05);
+    padding: 20px;
+    margin: 16px auto;
+    max-width: 90%;
+    transition: transform 0.2s ease, background 0.3s ease;
+    cursor: pointer;
+  }
 
-    .card:active {
-      transform: scale(0.97);
-    }
+  .card:hover {
+    background: #2a2a2a;
+  }
 
-    .name {
-      font-size: 1.3em;
-      font-weight: bold;
-    }
+  .card:active {
+    transform: scale(0.97);
+  }
 
-    .pref {
-      display: none;
-      margin-top: 8px;
-      font-weight: bold;
-      color: #555;
-      font-size: 1.1em;
-    }
+  .name {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #fff;
+  }
 
-    .action {
+  .pref {
+    display: none;
+    margin-top: 8px;
+    font-weight: bold;
+    color: #aaa;
+    font-size: 1.1em;
+  }
+
+  .action {
     position: fixed;
     bottom: 20px;
     left: 50%;
@@ -74,21 +81,23 @@
     border-radius: 30px;
     cursor: pointer;
     z-index: 1000;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    touch-action: manipulation; /* ← これを追加 */
-    }
-    .action:active {
-      background: #005ecb;
-    }
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    touch-action: manipulation;
+  }
 
-    /* 小さな端末での文字サイズ調整 */
-    @media (max-width: 480px) {
-      h1 { font-size: 1.6em; }
-      .name { font-size: 1.2em; }
-      .pref { font-size: 1em; }
-      .action { font-size: 1.1em; padding: 12px 30px; }
-    }
-  </style>
+  .action:active {
+    background: #005ecb;
+  }
+
+  /* 小さな端末での文字サイズ調整 */
+  @media (max-width: 480px) {
+    h1 { font-size: 1.6em; }
+    .name { font-size: 1.2em; }
+    .pref { font-size: 1em; }
+    .action { font-size: 1.1em; padding: 12px 30px; }
+  }
+</style>
+
 </head>
 <body>
   <h1>市町村クイズ</h1>
@@ -1094,3 +1103,4 @@ startQuiz();
 </script>
 </body>
 </html>
+
