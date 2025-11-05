@@ -2,67 +2,82 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>市町村クイズ</title>
 <style>
   body {
     font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
     background: #121212;
     color: #e5e5e5;
-    padding: 16px;
     margin: 0;
     text-align: center;
     height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: hidden; /* スクロール防止 */
+    touch-action: manipulation; /* タップの反応改善 */
   }
 
   h1 {
     font-size: 1.8em;
     color: #f1f1f1;
-    margin-bottom: 16px;
+    margin: 12px 0;
   }
 
   #typeSelector {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
   #typeSelector input[type="checkbox"] {
-    transform: scale(1.5);
+    transform: scale(1.6);
     margin-right: 6px;
   }
 
   #typeSelector label {
     font-size: 1.1em;
-    margin-right: 14px;
+    margin-right: 12px;
     color: #ddd;
   }
 
   .card {
+    flex-grow: 1;
     background: #1e1e1e;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(255,255,255,0.05);
-    padding: 20px;
-    margin: 40px auto;
-    max-width: 90%;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(255,255,255,0.05);
+    margin: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     transition: background 0.3s ease;
   }
 
   .name {
-    font-size: 1.4em;
+    font-size: 1.8em;
     font-weight: bold;
     color: #fff;
   }
 
   .pref {
     display: none;
-    margin-top: 10px;
+    margin-top: 16px;
     font-weight: bold;
     color: #aaa;
-    font-size: 1.1em;
+    font-size: 1.3em;
+  }
+
+  #guide {
+    font-size: 0.95em;
+    color: #888;
+    margin-bottom: 8px;
   }
 
   @media (max-width: 480px) {
     h1 { font-size: 1.6em; }
-    .name { font-size: 1.2em; }
-    .pref { font-size: 1em; }
+    .name { font-size: 1.6em; }
+    .pref { font-size: 1.2em; }
+    #guide { font-size: 0.9em; }
   }
 </style>
 </head>
@@ -75,10 +90,11 @@
     <label><input type="checkbox" value="village"> 村</label>
   </div>
 
+  <div id="guide">画面をタップして答えを表示、もう一度で次の問題へ</div>
+
   <div id="quiz"></div>
 
   <script>
-  // 仮データ
   const data = [
   // 北海道
   { name: '札幌市', pref: 'さっぽろ（北海道）', type: 'city' },
@@ -1927,7 +1943,6 @@
   ];
 
 
-  // 配列をシャッフル
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -1939,7 +1954,6 @@
   let shuffledData = [];
   let currentIndex = 0;
   let answered = false;
-
   const quizContainer = document.getElementById('quiz');
 
   function getSelectedTypes() {
@@ -1947,14 +1961,13 @@
   }
 
   function getFilteredData() {
-    const selectedTypes = getSelectedTypes();
-    return shuffle(data.filter(item => selectedTypes.includes(item.type)));
+    const selected = getSelectedTypes();
+    return shuffle(data.filter(item => selected.includes(item.type)));
   }
 
   function showQuestion(index) {
     quizContainer.innerHTML = '';
     answered = false;
-
     const item = shuffledData[index];
     const card = document.createElement('div');
     card.className = 'card';
@@ -1968,13 +1981,12 @@
   function startQuiz() {
     shuffledData = getFilteredData();
     currentIndex = 0;
-    showQuestion(currentIndex);
+    if (shuffledData.length > 0) showQuestion(currentIndex);
+    else quizContainer.innerHTML = '<p>表示する市町村がありません。</p>';
   }
 
-  // 背景全体をクリックして進行
   document.body.addEventListener('click', (e) => {
-    // チェックボックスやラベルをクリックした場合は無視
-    if (e.target.closest('#typeSelector')) return;
+    if (e.target.closest('#typeSelector')) return; // チェックボックス無視
 
     const pref = document.querySelector('.pref');
     if (!pref) return;
@@ -1987,17 +1999,17 @@
       if (currentIndex < shuffledData.length) {
         showQuestion(currentIndex);
       } else {
-        quizContainer.innerHTML = '<p>クイズは終了です！</p>';
+        quizContainer.innerHTML = '<p>🎉 クイズ終了！</p>';
       }
     }
   });
 
-  // チェックボックス変更で再スタート
   document.querySelectorAll('#typeSelector input').forEach(cb => {
-    cb.addEventListener('change', () => startQuiz());
+    cb.addEventListener('change', startQuiz);
   });
 
   startQuiz();
   </script>
 </body>
 </html>
+
