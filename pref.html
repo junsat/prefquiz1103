@@ -1,194 +1,2009 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>市町村クイズ</title>
-<style>
-  body {
-    font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
-    background: #121212;
-    color: #f5f5f5;
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    overflow: hidden; /* スクロール防止 */
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-  }
-
-  header {
-    padding: 10px 0;
-    background: #1b1b1b;
-    border-bottom: 1px solid #333;
-  }
-
-  h1 {
-    font-size: 1.4em;
-    margin: 0;
-    color: #f1f1f1;
-  }
-
-  #typeSelector {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 6px;
-  }
-
-  #typeSelector label {
-    font-size: 1.1em;
-    color: #ccc;
-    display: flex;
-    align-items: center;
-  }
-
-  #typeSelector input[type="checkbox"] {
-    transform: scale(1.8);
-    margin-right: 6px;
-    accent-color: #007aff;
-  }
-
-  #guide {
-    font-size: 0.9em;
-    color: #999;
-    margin-top: 8px;
-  }
-
-  #quiz {
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>市町村単語帳</title>
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+    body {
+      font-family: sans-serif;
+      background: #121212;
+      color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+    }
+    h1 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
+    #typeSelector {
+      margin-bottom: 20px;
+    }
+    #typeSelector label {
+      font-size: 1.1em;
+      margin-right: 12px;
+    }
+    #typeSelector input[type="checkbox"] {
+      transform: scale(1.5);
+      margin-right: 6px;
+    }
+    #quiz {
     flex-grow: 1;
+    width: 100%;
     display: flex;
-    flex-direction: column;
     justify-content: center;
-    align-items: center;
-  }
+    align-items: flex-start; /* ← ここを変更 */
+    padding-top: 40px;        /* ← 追加で少し余白を上に */
+    } 
 
-  .card {
-    background: #1f1f1f;
-    border-radius: 16px;
-    box-shadow: 0 4px 10px rgba(255,255,255,0.05);
-    padding: 30px 20px;
-    width: 85%;
-    transition: background 0.3s ease;
-  }
-
-  .name {
-    font-size: 1.8em;
-    font-weight: bold;
-    color: #fff;
-  }
-
-  .pref {
-    display: none;
-    margin-top: 14px;
-    font-size: 1.4em;
-    color: #aaa;
-    font-weight: bold;
-  }
-
-  @media (max-width: 480px) {
-    .name { font-size: 1.6em; }
-    .pref { font-size: 1.2em; }
-    #typeSelector label { font-size: 1em; }
-  }
-</style>
+    .card {
+      background: #1e1e1e;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      padding: 20px;
+      max-width: 320px;
+      width: 80%;
+      cursor: pointer;
+    }
+    .name {
+      font-size: 1.4em;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+    .pref {
+      display: none;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #80d0ff;
+      margin-top: 12px;
+    }
+  </style>
 </head>
 <body>
+  <h1>市町村単語帳</h1>
 
-  <header>
-    <h1>市町村クイズ</h1>
-    <div id="typeSelector">
-      <label><input type="checkbox" value="city" checked> 市</label>
-      <label><input type="checkbox" value="town"> 町</label>
-      <label><input type="checkbox" value="village"> 村</label>
-    </div>
-    <div id="guide">📍 画面をタップ → 答え表示 / もう一度 → 次の問題</div>
-  </header>
+  <div id="typeSelector">
+    <label><input type="checkbox" value="city" checked> 市</label>
+    <label><input type="checkbox" value="town" checked> 町</label>
+    <label><input type="checkbox" value="village" checked> 村</label>
+  </div>
 
   <div id="quiz"></div>
 
-  <footer>全画面タップで進行できます</footer>
-
   <script>
-  const data = [
-    { name: "札幌市", pref: "北海道", type: "city" },
-    { name: "川口市", pref: "埼玉県", type: "city" },
-    { name: "南木曽町", pref: "長野県", type: "town" },
-    { name: "白馬村", pref: "長野県", type: "village" },
-    { name: "那覇市", pref: "沖縄県", type: "city" },
-    { name: "伊勢市", pref: "三重県", type: "city" },
-  ];
+    const data = [
+      // 北海道
+  { name: '札幌市', pref: 'さっぽろ（北海道）', type: 'city' },
+  { name: '函館市', pref: 'はこだて（北海道）', type: 'city' },
+  { name: '小樽市', pref: 'おたる（北海道）', type: 'city' },
+  { name: '旭川市', pref: 'あさひかわ（北海道）', type: 'city' },
+  { name: '室蘭市', pref: 'むろらん（北海道）', type: 'city' },
+  { name: '釧路市', pref: 'くしろ（北海道）', type: 'city' },
+  { name: '帯広市', pref: 'おびひろ（北海道）', type: 'city' },
+  { name: '北見市', pref: 'きたみ（北海道）', type: 'city' },
+  { name: '夕張市', pref: 'ゆうばり（北海道）', type: 'city' },
+  { name: '岩見沢市', pref: 'いわみざわ（北海道）', type: 'city' },
+  { name: '網走市', pref: 'あばしり（北海道）', type: 'city' },
+  { name: '留萌市', pref: 'るもい（北海道）', type: 'city' },
+  { name: '苫小牧市', pref: 'とまこまい（北海道）', type: 'city' },
+  { name: '稚内市', pref: 'わっかない（北海道）', type: 'city' },
+  { name: '美唄市', pref: 'びばい（北海道）', type: 'city' },
+  { name: '芦別市', pref: 'あしべつ（北海道）', type: 'city' },
+  { name: '江別市', pref: 'えべつ（北海道）', type: 'city' },
+  { name: '赤平市', pref: 'あかびら（北海道）', type: 'city' },
+  { name: '紋別市', pref: 'もんべつ（北海道）', type: 'city' },
+  { name: '士別市', pref: 'しべつ（北海道）', type: 'city' },
+  { name: '名寄市', pref: 'なよろ（北海道）', type: 'city' },
+  { name: '三笠市', pref: 'みかさ（北海道）', type: 'city' },
+  { name: '根室市', pref: 'ねむろ（北海道）', type: 'city' },
+  { name: '千歳市', pref: 'ちとせ（北海道）', type: 'city' },
+  { name: '滝川市', pref: 'たきかわ（北海道）', type: 'city' },
+  { name: '砂川市', pref: 'すながわ（北海道）', type: 'city' },
+  { name: '歌志内市', pref: 'うたしない（北海道）', type: 'city' },
+  { name: '深川市', pref: 'ふかがわ（北海道）', type: 'city' },
+  { name: '富良野市', pref: 'ふらの（北海道）', type: 'city' },
+  { name: '登別市', pref: 'のぼりべつ（北海道）', type: 'city' },
+  { name: '恵庭市', pref: 'えにわ（北海道）', type: 'city' },
+  { name: '伊達市', pref: 'だて（北海道）', type: 'city' },
+  { name: '北広島市', pref: 'きたひろしま（北海道）', type: 'city' },
+  { name: '石狩市', pref: 'いしかり（北海道）', type: 'city' },
+  { name: '北斗市', pref: 'ほくと（北海道）', type: 'city' },
+  { name: '当別町', pref: 'とうべつ・ちょう（北海道）', type: 'town' },
+  { name: '松前町', pref: 'まつまえ・ちょう（北海道）', type: 'town' },
+  { name: '福島町', pref: 'ふくしま・ちょう（北海道）', type: 'town' },
+  { name: '知内町', pref: 'しりうち・ちょう（北海道）', type: 'town' },
+  { name: '木古内町', pref: 'きこない・ちょう（北海道）', type: 'town' },
+  { name: '七飯町', pref: 'ななえ・ちょう（北海道）', type: 'town' },
+  { name: '鹿部町', pref: 'しかべ・ちょう（北海道）', type: 'town' },
+  { name: '森町', pref: 'もり・まち（北海道）', type: 'town' },
+  { name: '八雲町', pref: 'やくも・ちょう（北海道）', type: 'town' },
+  { name: '長万部町', pref: 'おしゃまんべ・ちょう（北海道）', type: 'town' },
+  { name: '江差町', pref: 'えさし・ちょう（北海道）', type: 'town' },
+  { name: '上ノ国町', pref: 'かみのくに・ちょう（北海道）', type: 'town' },
+  { name: '厚沢部町', pref: 'あっさぶ・ちょう（北海道）', type: 'town' },
+  { name: '乙部町', pref: 'おとべ・ちょう（北海道）', type: 'town' },
+  { name: '奥尻町', pref: 'おくしり・ちょう（北海道）', type: 'town' },
+  { name: '今金町', pref: 'いまかね・ちょう（北海道）', type: 'town' },
+  { name: 'せたな町', pref: 'せたな・ちょう（北海道）', type: 'town' },
+  { name: '寿都町', pref: 'すっつ・ちょう（北海道）', type: 'town' },
+  { name: '黒松内町', pref: 'くろまつない・ちょう（北海道）', type: 'town' },
+  { name: '蘭越町', pref: 'らんこし・ちょう（北海道）', type: 'town' },
+  { name: 'ニセコ町', pref: 'にせこ・ちょう（北海道）', type: 'town' },
+  { name: '喜茂別町', pref: 'きもべつ・ちょう（北海道）', type: 'town' },
+  { name: '京極町', pref: 'きょうごく・ちょう（北海道）', type: 'town' },
+  { name: '倶知安町', pref: 'くっちゃん・ちょう（北海道）', type: 'town' },
+  { name: '共和町', pref: 'きょうわ・ちょう（北海道）', type: 'town' },
+  { name: '岩内町', pref: 'いわない・ちょう（北海道）', type: 'town' },
+  { name: '積丹町', pref: 'しゃこたん・ちょう（北海道）', type: 'town' },
+  { name: '古平町', pref: 'ふるびら・ちょう（北海道）', type: 'town' },
+  { name: '仁木町', pref: 'にき・ちょう（北海道）', type: 'town' },
+  { name: '余市町', pref: 'よいち・ちょう（北海道）', type: 'town' },
+  { name: '南幌町', pref: 'なんぽろ・ちょう（北海道）', type: 'town' },
+  { name: '奈井江町', pref: 'ないえ・ちょう（北海道）', type: 'town' },
+  { name: '上砂川町', pref: 'かみすながわ・ちょう（北海道）', type: 'town' },
+  { name: '由仁町', pref: 'ゆに・ちょう（北海道）', type: 'town' },
+  { name: '長沼町', pref: 'ながぬま・ちょう（北海道）', type: 'town' },
+  { name: '栗山町', pref: 'くりやま・ちょう（北海道）', type: 'town' },
+  { name: '月形町', pref: 'つきがた・ちょう（北海道）', type: 'town' },
+  { name: '浦臼町', pref: 'うらうす・ちょう（北海道）', type: 'town' },
+  { name: '新十津川町', pref: 'しんとつかわ・ちょう（北海道）', type: 'town' },
+  { name: '妹背牛町', pref: 'もせうし・ちょう（北海道）', type: 'town' },
+  { name: '秩父別町', pref: 'ちっぷべつ・ちょう（北海道）', type: 'town' },
+  { name: '雨竜町', pref: 'うりゅう・ちょう（北海道）', type: 'town' },
+  { name: '北竜町', pref: 'ほくりゅう・ちょう（北海道）', type: 'town' },
+  { name: '沼田町', pref: 'ぬまた・ちょう（北海道）', type: 'town' },
+  { name: '鷹栖町', pref: 'たかす・ちょう（北海道）', type: 'town' },
+  { name: '東神楽町', pref: 'ひがしかぐら・ちょう（北海道）', type: 'town' },
+  { name: '当麻町', pref: 'とうま・ちょう（北海道）', type: 'town' },
+  { name: '比布町', pref: 'ぴっぷ・ちょう（北海道）', type: 'town' },
+  { name: '愛別町', pref: 'あいべつ・ちょう（北海道）', type: 'town' },
+  { name: '上川町', pref: 'かみかわ・ちょう（北海道）', type: 'town' },
+  { name: '東川町', pref: 'ひがしかわ・ちょう（北海道）', type: 'town' },
+  { name: '美瑛町', pref: 'びえい・ちょう（北海道）', type: 'town' },
+  { name: '上富良野町', pref: 'かみふらの・ちょう（北海道）', type: 'town' },
+  { name: '中富良野町', pref: 'なかふらの・ちょう（北海道）', type: 'town' },
+  { name: '南富良野町', pref: 'みなみふらの・ちょう（北海道）', type: 'town' },
+  { name: '和寒町', pref: 'わっさむ・ちょう（北海道）', type: 'town' },
+  { name: '剣淵町', pref: 'けんぶち・ちょう（北海道）', type: 'town' },
+  { name: '下川町', pref: 'しもかわ・ちょう（北海道）', type: 'town' },
+  { name: '美深町', pref: 'びふか・ちょう（北海道）', type: 'town' },
+  { name: '中川町', pref: 'なかがわ・ちょう（北海道）', type: 'town' },
+  { name: '幌加内町', pref: 'ほろかない・ちょう（北海道）', type: 'town' },
+  { name: '増毛町', pref: 'ましけ・ちょう（北海道）', type: 'town' },
+  { name: '小平町', pref: 'おびら・ちょう（北海道）', type: 'town' },
+  { name: '苫前町', pref: 'とままえ・ちょう（北海道）', type: 'town' },
+  { name: '羽幌町', pref: 'はぼろ・ちょう（北海道）', type: 'town' },
+  { name: '遠別町', pref: 'えんべつ・ちょう（北海道）', type: 'town' },
+  { name: '天塩町', pref: 'てしお・ちょう（北海道）', type: 'town' },
+  { name: '浜頓別町', pref: 'はまとんべつ・ちょう（北海道）', type: 'town' },
+  { name: '中頓別町', pref: 'なかとんべつ・ちょう（北海道）', type: 'town' },
+  { name: '枝幸町', pref: 'えさし・ちょう（北海道）', type: 'town' },
+  { name: '豊富町', pref: 'とよとみ・ちょう（北海道）', type: 'town' },
+  { name: '幌延町', pref: 'ほろのべ・ちょう（北海道）', type: 'town' },
+  { name: '礼文町', pref: 'れぶん・ちょう（北海道）', type: 'town' },
+  { name: '利尻町', pref: 'りしり・ちょう（北海道）', type: 'town' },
+  { name: '利尻富士町', pref: 'りしりふじ・ちょう（北海道）', type: 'town' },
+  { name: '美幌町', pref: 'びほろ・ちょう（北海道）', type: 'town' },
+  { name: '津別町', pref: 'つべつ・ちょう（北海道）', type: 'town' },
+  { name: '大空町', pref: 'おおぞら・ちょう（北海道）', type: 'town' },
+  { name: '斜里町', pref: 'しゃり・ちょう（北海道）', type: 'town' },
+  { name: '清里町', pref: 'きよさと・ちょう（北海道）', type: 'town' },
+  { name: '小清水町', pref: 'こしみず・ちょう（北海道）', type: 'town' },
+  { name: '訓子府町', pref: 'くんねっぷ・ちょう（北海道）', type: 'town' },
+  { name: '置戸町', pref: 'おけと・ちょう（北海道）', type: 'town' },
+  { name: '佐呂間町', pref: 'さろま・ちょう（北海道）', type: 'town' },
+  { name: '遠軽町', pref: 'えんがる・ちょう（北海道）', type: 'town' },
+  { name: '湧別町', pref: 'ゆうべつ・ちょう（北海道）', type: 'town' },
+  { name: '滝上町', pref: 'たきのうえ・ちょう（北海道）', type: 'town' },
+  { name: '興部町', pref: 'おこっぺ・ちょう（北海道）', type: 'town' },
+  { name: '雄武町', pref: 'おうむ・ちょう（北海道）', type: 'town' },
+  { name: '豊浦町', pref: 'とようら・ちょう（北海道）', type: 'town' },
+  { name: '洞爺湖町', pref: 'とうやこ・ちょう（北海道）', type: 'town' },
+  { name: '壮瞥町', pref: 'そうべつ・ちょう（北海道）', type: 'town' },
+  { name: '白老町', pref: 'しらおい・ちょう（北海道）', type: 'town' },
+  { name: '厚真町', pref: 'あつま・ちょう（北海道）', type: 'town' },
+  { name: '安平町', pref: 'あびら・ちょう（北海道）', type: 'town' },
+  { name: 'むかわ町', pref: 'むかわ・ちょう（北海道）', type: 'town' },
+  { name: '日高町', pref: 'ひだか・ちょう（北海道）', type: 'town' },
+  { name: '平取町', pref: 'びらとり・ちょう（北海道）', type: 'town' },
+  { name: '新冠町', pref: 'にいかっぷ・ちょう（北海道）', type: 'town' },
+  { name: '浦河町', pref: 'うらかわ・ちょう（北海道）', type: 'town' },
+  { name: '様似町', pref: 'さまに・ちょう（北海道）', type: 'town' },
+  { name: 'えりも町', pref: 'えりも・ちょう（北海道）', type: 'town' },
+  { name: '新ひだか町', pref: 'しんひだか・ちょう（北海道）', type: 'town' },
+  { name: '音更町', pref: 'おとふけ・ちょう（北海道）', type: 'town' },
+  { name: '士幌町', pref: 'しほろ・ちょう（北海道）', type: 'town' },
+  { name: '上士幌町', pref: 'かみしほろ・ちょう（北海道）', type: 'town' },
+  { name: '鹿追町', pref: 'しかおい・ちょう（北海道）', type: 'town' },
+  { name: '新得町', pref: 'しんとく・ちょう（北海道）', type: 'town' },
+  { name: '清水町', pref: 'しみず・ちょう（北海道）', type: 'town' },
+  { name: '芽室町', pref: 'めむろ・ちょう（北海道）', type: 'town' },
+  { name: '大樹町', pref: 'たいき・ちょう（北海道）', type: 'town' },
+  { name: '広尾町', pref: 'ひろお・ちょう（北海道）', type: 'town' },
+  { name: '幕別町', pref: 'まくべつ・ちょう（北海道）', type: 'town' },
+  { name: '池田町', pref: 'いけだ・ちょう（北海道）', type: 'town' },
+  { name: '豊頃町', pref: 'とよころ・ちょう（北海道）', type: 'town' },
+  { name: '本別町', pref: 'ほんべつ・ちょう（北海道）', type: 'town' },
+  { name: '足寄町', pref: 'あしょろ・ちょう（北海道）', type: 'town' },
+  { name: '陸別町', pref: 'りくべつ・ちょう（北海道）', type: 'town' },
+  { name: '浦幌町', pref: 'うらほろ・ちょう（北海道）', type: 'town' },
+  { name: '釧路町', pref: 'くしろ・ちょう（北海道）', type: 'town' },
+  { name: '厚岸町', pref: 'あっけし・ちょう（北海道）', type: 'town' },
+  { name: '浜中町', pref: 'はまなか・ちょう（北海道）', type: 'town' },
+  { name: '標茶町', pref: 'しべちゃ・ちょう（北海道）', type: 'town' },
+  { name: '弟子屈町', pref: 'てしかが・ちょう（北海道）', type: 'town' },
+  { name: '白糠町', pref: 'しらぬか・ちょう（北海道）', type: 'town' },
+  { name: '別海町', pref: 'べつかい・ちょう（北海道）', type: 'town' },
+  { name: '中標津町', pref: 'なかしべつ・ちょう（北海道）', type: 'town' },
+  { name: '標津町', pref: 'しべつ・ちょう（北海道）', type: 'town' },
+  { name: '羅臼町', pref: 'らうす・ちょう（北海道）', type: 'town' },
+  { name: '新篠津村', pref: 'しんしのつ（北海道）', type: 'village' },
+{ name: '島牧村', pref: 'しままき（北海道）', type: 'village' },
+{ name: '真狩村', pref: 'まっかり（北海道）', type: 'village' },
+{ name: '留寿都村', pref: 'るすつ（北海道）', type: 'village' },
+{ name: '泊村', pref: 'とまり（北海道）', type: 'village' },
+{ name: '神恵内村', pref: 'かもえない（北海道）', type: 'village' },
+{ name: '赤井川村', pref: 'あかいがわ（北海道）', type: 'village' },
+{ name: '占冠村', pref: 'しむかっぷ（北海道）', type: 'village' },
+{ name: '音威子府村', pref: 'おといねっぷ（北海道）', type: 'village' },
+{ name: '初山別村', pref: 'しょさんべつ（北海道）', type: 'village' },
+{ name: '猿払村', pref: 'さるふつ（北海道）', type: 'village' },
+{ name: '西興部村', pref: 'にしおこっぺ（北海道）', type: 'village' },
+{ name: '中札内村', pref: 'なかさつない（北海道）', type: 'village' },
+{ name: '更別村', pref: 'さらべつ（北海道）', type: 'village' },
+{ name: '鶴居村', pref: 'つるい（北海道）', type: 'village' },
 
-  function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
+  
+
+  // 青森県
+  { name: '青森市', pref: 'あおもり（青森県）', type: 'city' },
+  { name: '弘前市', pref: 'ひろさき（青森県）', type: 'city' },
+  { name: '八戸市', pref: 'はちのへ（青森県）', type: 'city' },
+  { name: '黒石市', pref: 'くろいし（青森県）', type: 'city' },
+  { name: '五所川原市', pref: 'ごしょがわら（青森県）', type: 'city' },
+  { name: '十和田市', pref: 'とわだ（青森県）', type: 'city' },
+  { name: '三沢市', pref: 'みさわ（青森県）', type: 'city' },
+  { name: 'むつ市', pref: 'むつ（青森県）', type: 'city' },
+  { name: 'つがる市', pref: 'つがる（青森県）', type: 'city' },
+  { name: '平川市', pref: 'ひらかわ（青森県）', type: 'city' },
+{ name: '平内町', pref: 'ひらない・まち（青森県）', type: 'town' },
+{ name: '今別町', pref: 'いまべつ・まち（青森県）', type: 'town' },
+{ name: '外ヶ浜町', pref: 'そとがはま・まち（青森県）', type: 'town' },
+{ name: '鰺ヶ沢町', pref: 'あじがさわ・まち（青森県）', type: 'town' },
+{ name: '深浦町', pref: 'ふかうら・まち（青森県）', type: 'town' },
+{ name: '藤崎町', pref: 'ふじさき・まち（青森県）', type: 'town' },
+{ name: '大鰐町', pref: 'おおわに・まち（青森県）', type: 'town' },
+{ name: '板柳町', pref: 'いたやなぎ・まち（青森県）', type: 'town' },
+{ name: '鶴田町', pref: 'つるた・まち（青森県）', type: 'town' },
+{ name: '中泊町', pref: 'なかどまり・まち（青森県）', type: 'town' },
+{ name: '野辺地町', pref: 'のへじ・まち（青森県）', type: 'town' },
+{ name: '七戸町', pref: 'しちのへ・まち（青森県）', type: 'town' },
+{ name: '六戸町', pref: 'ろくのへ・まち（青森県）', type: 'town' },
+{ name: '横浜町', pref: 'よこはま・まち（青森県）', type: 'town' },
+{ name: '東北町', pref: 'とうほく・まち（青森県）', type: 'town' },
+{ name: 'おいらせ町', pref: 'おいらせ・ちょう（青森県）', type: 'town' },
+{ name: '大間町', pref: 'おおま・まち（青森県）', type: 'town' },
+{ name: '三戸町', pref: 'さんのへ・まち（青森県）', type: 'town' },
+{ name: '五戸町', pref: 'ごのへ・まち（青森県）', type: 'town' },
+{ name: '田子町', pref: 'たっこ・まち（青森県）', type: 'town' },
+{ name: '南部町', pref: 'なんぶ・ちょう（青森県）', type: 'town' },
+{ name: '階上町', pref: 'はしかみ・ちょう（青森県）', type: 'town' },
+{ name: '蓬田村', pref: 'よもぎた（青森県）', type: 'village' },
+{ name: '西目屋村', pref: 'にしめや（青森県）', type: 'village' },
+{ name: '田舎館村', pref: 'いなかだて（青森県）', type: 'village' },
+{ name: '六ヶ所村', pref: 'ろっかしょ（青森県）', type: 'village' },
+{ name: '東通村', pref: 'ひがしどおり（青森県）', type: 'village' },
+{ name: '風間浦村', pref: 'かざまうら（青森県）', type: 'village' },
+{ name: '佐井村', pref: 'さい（青森県）', type: 'village' },
+{ name: '新郷村', pref: 'しんごう（青森県）', type: 'village' },
+
+
+  // 岩手県
+  { name: '盛岡市', pref: 'もりおか（岩手県）', type: 'city' },
+  { name: '宮古市', pref: 'みやこ（岩手県）', type: 'city' },
+  { name: '大船渡市', pref: 'おおふなと（岩手県）', type: 'city' },
+  { name: '花巻市', pref: 'はなまき（岩手県）', type: 'city' },
+  { name: '北上市', pref: 'きたかみ（岩手県）', type: 'city' },
+  { name: '久慈市', pref: 'くじ（岩手県）', type: 'city' },
+  { name: '遠野市', pref: 'とおの（岩手県）', type: 'city' },
+  { name: '一関市', pref: 'いちのせき（岩手県）', type: 'city' },
+  { name: '陸前高田市', pref: 'りくぜんたかた（岩手県）', type: 'city' },
+  { name: '釜石市', pref: 'かまいし（岩手県）', type: 'city' },
+  { name: '二戸市', pref: 'にのへ（岩手県）', type: 'city' },
+  { name: '八幡平市', pref: 'はちまんたい（岩手県）', type: 'city' },
+  { name: '奥州市', pref: 'おうしゅう（岩手県）', type: 'city' },
+  { name: '滝沢市', pref: 'たきざわ（岩手県）', type: 'city' },
+  { name: '雫石町', pref: 'しずくいし・ちょう（岩手県）', type: 'town' },
+{ name: '葛巻町', pref: 'くずまき・まち（岩手県）', type: 'town' },
+{ name: '岩手町', pref: 'いわて・まち（岩手県）', type: 'town' },
+{ name: '紫波町', pref: 'しわ・ちょう（岩手県）', type: 'town' },
+{ name: '矢巾町', pref: 'やはば・ちょう（岩手県）', type: 'town' },
+{ name: '西和賀町', pref: 'にしわが・まち（岩手県）', type: 'town' },
+{ name: '金ケ崎町', pref: 'かねがさき・ちょう（岩手県）', type: 'town' },
+{ name: '平泉町', pref: 'ひらいずみ・ちょう（岩手県）', type: 'town' },
+{ name: '住田町', pref: 'すみた・ちょう（岩手県）', type: 'town' },
+{ name: '大槌町', pref: 'おおつち・ちょう（岩手県）', type: 'town' },
+{ name: '山田町', pref: 'やまだ・まち（岩手県）', type: 'town' },
+{ name: '岩泉町', pref: 'いわいずみ・ちょう（岩手県）', type: 'town' },
+{ name: '軽米町', pref: 'かるまい・まち（岩手県）', type: 'town' },
+{ name: '洋野町', pref: 'ひろの・ちょう（岩手県）', type: 'town' },
+{ name: '一戸町', pref: 'いちのへ・まち（岩手県）', type: 'town' },
+{ name: '田野畑村', pref: 'たのはた（岩手県）', type: 'village' },
+{ name: '普代村', pref: 'ふだい（岩手県）', type: 'village' },
+{ name: '野田村', pref: 'のだ（岩手県）', type: 'village' },
+{ name: '九戸村', pref: 'くのへ（岩手県）', type: 'village' },
+
+
+  // 宮城県
+  { name: '仙台市', pref: 'せんだい（宮城県）', type: 'city' },
+  { name: '石巻市', pref: 'いしのまき（宮城県）', type: 'city' },
+  { name: '塩竈市', pref: 'しおがま（宮城県）', type: 'city' },
+  { name: '気仙沼市', pref: 'けせんぬま（宮城県）', type: 'city' },
+  { name: '白石市', pref: 'しろいし（宮城県）', type: 'city' },
+  { name: '名取市', pref: 'なとり（宮城県）', type: 'city' },
+  { name: '角田市', pref: 'かくだ（宮城県）', type: 'city' },
+  { name: '多賀城市', pref: 'たがじょう（宮城県）', type: 'city' },
+  { name: '岩沼市', pref: 'いわぬま（宮城県）', type: 'city' },
+  { name: '登米市', pref: 'とめ（宮城県）', type: 'city' },
+  { name: '栗原市', pref: 'くりはら（宮城県）', type: 'city' },
+  { name: '東松島市', pref: 'ひがしまつしま（宮城県）', type: 'city' },
+  { name: '大崎市', pref: 'おおさき（宮城県）', type: 'city' },
+  { name: '富谷市', pref: 'とみや（宮城県）', type: 'city' },
+  { name: '蔵王町', pref: 'ざおう・まち（宮城県）', type: 'town' },
+{ name: '七ヶ宿町', pref: 'しちかしゅく・まち（宮城県）', type: 'town' },
+{ name: '大河原町', pref: 'おおがわら・まち（宮城県）', type: 'town' },
+{ name: '村田町', pref: 'むらた・まち（宮城県）', type: 'town' },
+{ name: '柴田町', pref: 'しばた・まち（宮城県）', type: 'town' },
+{ name: '川崎町', pref: 'かわさき・まち（宮城県）', type: 'town' },
+{ name: '丸森町', pref: 'まるもり・まち（宮城県）', type: 'town' },
+{ name: '亘理町', pref: 'わたり・ちょう（宮城県）', type: 'town' },
+{ name: '山元町', pref: 'やまもと・ちょう（宮城県）', type: 'town' },
+{ name: '松島町', pref: 'まつしま・まち（宮城県）', type: 'town' },
+{ name: '七ヶ浜町', pref: 'しちがはま・まち（宮城県）', type: 'town' },
+{ name: '利府町', pref: 'りふ・ちょう（宮城県）', type: 'town' },
+{ name: '大和町', pref: 'たいわ・ちょう（宮城県）', type: 'town' },
+{ name: '大郷町', pref: 'おおさと・ちょう（宮城県）', type: 'town' },
+{ name: '色麻町', pref: 'しかま・ちょう（宮城県）', type: 'town' },
+{ name: '加美町', pref: 'かみ・まち（宮城県）', type: 'town' },
+{ name: '涌谷町', pref: 'わくや・ちょう（宮城県）', type: 'town' },
+{ name: '美里町', pref: 'みさと・まち（宮城県）', type: 'town' },
+{ name: '女川町', pref: 'おながわ・ちょう（宮城県）', type: 'town' },
+{ name: '南三陸町', pref: 'みなみさんりく・ちょう（宮城県）', type: 'town' },
+{ name: '大衡村', pref: 'おおひら（宮城県）', type: 'village' },
+
+
+  // 秋田県
+  { name: '秋田市', pref: 'あきた（秋田県）', type: 'city' },
+  { name: '能代市', pref: 'のしろ（秋田県）', type: 'city' },
+  { name: '横手市', pref: 'よこて（秋田県）', type: 'city' },
+  { name: '大館市', pref: 'おおだて（秋田県）', type: 'city' },
+  { name: '男鹿市', pref: 'おが（秋田県）', type: 'city' },
+  { name: '湯沢市', pref: 'ゆざわ（秋田県）', type: 'city' },
+  { name: '鹿角市', pref: 'かづの（秋田県）', type: 'city' },
+  { name: '由利本荘市', pref: 'ゆりほんじょう（秋田県）', type: 'city' },
+  { name: '潟上市', pref: 'かたがみ（秋田県）', type: 'city' },
+  { name: '大仙市', pref: 'だいせん（秋田県）', type: 'city' },
+  { name: '北秋田市', pref: 'きたあきた（秋田県）', type: 'city' },
+  { name: 'にかほ市', pref: 'にかほ（秋田県）', type: 'city' },
+  { name: '仙北市', pref: 'せんぼく（秋田県）', type: 'city' },
+  { name: '小坂町', pref: 'こさか・まち（秋田県）', type: 'town' },
+{ name: '藤里町', pref: 'ふじさと・まち（秋田県）', type: 'town' },
+{ name: '三種町', pref: 'みたね・ちょう（秋田県）', type: 'town' },
+{ name: '八峰町', pref: 'はっぽう・ちょう（秋田県）', type: 'town' },
+{ name: '五城目町', pref: 'ごじょうめ・まち（秋田県）', type: 'town' },
+{ name: '八郎潟町', pref: 'はちろうがた・まち（秋田県）', type: 'town' },
+{ name: '井川町', pref: 'いかわ・まち（秋田県）', type: 'town' },
+{ name: '美郷町', pref: 'みさと・ちょう（秋田県）', type: 'town' },
+{ name: '羽後町', pref: 'うご・まち（秋田県）', type: 'town' },
+{ name: '上小阿仁村', pref: 'かみこあに（秋田県）', type: 'village' },
+{ name: '大潟村', pref: 'おおがた（秋田県）', type: 'village' },
+{ name: '東成瀬村', pref: 'ひがしなるせ（秋田県）', type: 'village' },
+
+
+  // 山形県
+  { name: '山形市', pref: 'やまがた（山形県）', type: 'city' },
+  { name: '米沢市', pref: 'よねざわ（山形県）', type: 'city' },
+  { name: '鶴岡市', pref: 'つるおか（山形県）', type: 'city' },
+  { name: '酒田市', pref: 'さかた（山形県）', type: 'city' },
+  { name: '新庄市', pref: 'しんじょう（山形県）', type: 'city' },
+  { name: '寒河江市', pref: 'さがえ（山形県）', type: 'city' },
+  { name: '上山市', pref: 'かみのやま（山形県）', type: 'city' },
+  { name: '村山市', pref: 'むらやま（山形県）', type: 'city' },
+  { name: '長井市', pref: 'ながい（山形県）', type: 'city' },
+  { name: '天童市', pref: 'てんどう（山形県）', type: 'city' },
+  { name: '東根市', pref: 'ひがしね（山形県）', type: 'city' },
+  { name: '尾花沢市', pref: 'おばなざわ（山形県）', type: 'city' },
+  { name: '南陽市', pref: 'なんよう（山形県）', type: 'city' },
+  { name: '山辺町', pref: 'やまのべ・まち（山形県）', type: 'town' },
+{ name: '中山町', pref: 'なかやま・まち（山形県）', type: 'town' },
+{ name: '河北町', pref: 'かほく・ちょう（山形県）', type: 'town' },
+{ name: '西川町', pref: 'にしかわ・まち（山形県）', type: 'town' },
+{ name: '朝日町', pref: 'あさひ・まち（山形県）', type: 'town' },
+{ name: '大江町', pref: 'おおえ・まち（山形県）', type: 'town' },
+{ name: '大石田町', pref: 'おおいしだ・まち（山形県）', type: 'town' },
+{ name: '金山町', pref: 'かねやま・まち（山形県）', type: 'town' },
+{ name: '最上町', pref: 'もがみ・まち（山形県）', type: 'town' },
+{ name: '舟形町', pref: 'ふながた・まち（山形県）', type: 'town' },
+{ name: '真室川町', pref: 'まむろがわ・まち（山形県）', type: 'town' },
+{ name: '高畠町', pref: 'たかはた・まち（山形県）', type: 'town' },
+{ name: '川西町', pref: 'かわにし・まち（山形県）', type: 'town' },
+{ name: '小国町', pref: 'おぐに・まち（山形県）', type: 'town' },
+{ name: '白鷹町', pref: 'しらたか・まち（山形県）', type: 'town' },
+{ name: '飯豊町', pref: 'いいで・まち（山形県）', type: 'town' },
+{ name: '三川町', pref: 'みかわ・まち（山形県）', type: 'town' },
+{ name: '庄内町', pref: 'しょうない・まち（山形県）', type: 'town' },
+{ name: '遊佐町', pref: 'ゆざ・まち（山形県）', type: 'town' },
+{ name: '大蔵村', pref: 'おおくら（山形県）', type: 'village' },
+{ name: '鮭川村', pref: 'さけがわ（山形県）', type: 'village' },
+{ name: '戸沢村', pref: 'とざわ（山形県）', type: 'village' },
+
+
+  // 福島県
+  { name: '福島市', pref: 'ふくしま（福島県）', type: 'city' },
+  { name: '会津若松市', pref: 'あいづわかまつ（福島県）', type: 'city' },
+  { name: '郡山市', pref: 'こおりやま（福島県）', type: 'city' },
+  { name: 'いわき市', pref: 'いわき（福島県）', type: 'city' },
+  { name: '白河市', pref: 'しらかわ（福島県）', type: 'city' },
+  { name: '須賀川市', pref: 'すかがわ（福島県）', type: 'city' },
+  { name: '喜多方市', pref: 'きたかた（福島県）', type: 'city' },
+  { name: '相馬市', pref: 'そうま（福島県）', type: 'city' },
+  { name: '二本松市', pref: 'にほんまつ（福島県）', type: 'city' },
+  { name: '田村市', pref: 'たむら（福島県）', type: 'city' },
+  { name: '南相馬市', pref: 'みなみそうま（福島県）', type: 'city' },
+  { name: '伊達市', pref: 'だて（福島県）', type: 'city' },
+  { name: '本宮市', pref: 'もとみや（福島県）', type: 'city' },
+  { name: '桑折町', pref: 'こおり・まち（福島県）', type: 'town' },
+{ name: '国見町', pref: 'くにみ・まち（福島県）', type: 'town' },
+{ name: '川俣町', pref: 'かわまた・まち（福島県）', type: 'town' },
+{ name: '鏡石町', pref: 'かがみいし・まち（福島県）', type: 'town' },
+{ name: '下郷町', pref: 'しもごう・まち（福島県）', type: 'town' },
+{ name: '只見町', pref: 'ただみ・まち（福島県）', type: 'town' },
+{ name: '南会津町', pref: 'みなみあいづ・まち（福島県）', type: 'town' },
+{ name: '西会津町', pref: 'にしあいづ・まち（福島県）', type: 'town' },
+{ name: '磐梯町', pref: 'ばんだい・まち（福島県）', type: 'town' },
+{ name: '猪苗代町', pref: 'いなわしろ・まち（福島県）', type: 'town' },
+{ name: '会津坂下町', pref: 'あいづばんげ・まち（福島県）', type: 'town' },
+{ name: '柳津町', pref: 'やないづ・まち（福島県）', type: 'town' },
+{ name: '三島町', pref: 'みしま・まち（福島県）', type: 'town' },
+{ name: '金山町', pref: 'かねやま・まち（福島県）', type: 'town' },
+{ name: '会津美里町', pref: 'あいづみさと・まち（福島県）', type: 'town' },
+{ name: '矢吹町', pref: 'やぶき・まち（福島県）', type: 'town' },
+{ name: '棚倉町', pref: 'たなぐら・まち（福島県）', type: 'town' },
+{ name: '矢祭町', pref: 'やまつり・まち（福島県）', type: 'town' },
+{ name: '塙町', pref: 'はなわ・まち（福島県）', type: 'town' },
+{ name: '石川町', pref: 'いしかわ・まち（福島県）', type: 'town' },
+{ name: '浅川町', pref: 'あさかわ・まち（福島県）', type: 'town' },
+{ name: '古殿町', pref: 'ふるどの・まち（福島県）', type: 'town' },
+{ name: '三春町', pref: 'みはる・まち（福島県）', type: 'town' },
+{ name: '小野町', pref: 'おの・まち（福島県）', type: 'town' },
+{ name: '広野町', pref: 'ひろの・まち（福島県）', type: 'town' },
+{ name: '楢葉町', pref: 'ならは・まち（福島県）', type: 'town' },
+{ name: '富岡町', pref: 'とみおか・まち（福島県）', type: 'town' },
+{ name: '大熊町', pref: 'おおくま・まち（福島県）', type: 'town' },
+{ name: '双葉町', pref: 'ふたば・まち（福島県）', type: 'town' },
+{ name: '浪江町', pref: 'なみえ・まち（福島県）', type: 'town' },
+{ name: '新地町', pref: 'しんち・まち（福島県）', type: 'town' },
+{ name: '大玉村', pref: 'おおたま（福島県）', type: 'village' },
+{ name: '天栄村', pref: 'てんえい（福島県）', type: 'village' },
+{ name: '檜枝岐村', pref: 'ひのえまた（福島県）', type: 'village' },
+{ name: '北塩原村', pref: 'きたしおばら（福島県）', type: 'village' },
+{ name: '湯川村', pref: 'ゆがわ（福島県）', type: 'village' },
+{ name: '昭和村', pref: 'しょうわ（福島県）', type: 'village' },
+{ name: '西郷村', pref: 'にしごう（福島県）', type: 'village' },
+{ name: '泉崎村', pref: 'いずみざき（福島県）', type: 'village' },
+{ name: '中島村', pref: 'なかじま（福島県）', type: 'village' },
+{ name: '鮫川村', pref: 'さめがわ（福島県）', type: 'village' },
+{ name: '玉川村', pref: 'たまかわ（福島県）', type: 'village' },
+{ name: '平田村', pref: 'ひらた（福島県）', type: 'village' },
+{ name: '川内村', pref: 'かわうち（福島県）', type: 'village' },
+{ name: '葛尾村', pref: 'かつらお（福島県）', type: 'village' },
+{ name: '飯舘村', pref: 'いいたて（福島県）', type: 'village' },
+
+
+  // 茨城県
+  { name: '水戸市', pref: 'みと（茨城県）', type: 'city' },
+  { name: '日立市', pref: 'ひたち（茨城県）', type: 'city' },
+  { name: '土浦市', pref: 'つちうら（茨城県）', type: 'city' },
+  { name: '古河市', pref: 'こが（茨城県）', type: 'city' },
+  { name: '石岡市', pref: 'いしおか（茨城県）', type: 'city' },
+  { name: '結城市', pref: 'ゆうき（茨城県）', type: 'city' },
+  { name: '龍ケ崎市', pref: 'りゅうがさき（茨城県）', type: 'city' },
+  { name: '下妻市', pref: 'しもつま（茨城県）', type: 'city' },
+  { name: '常総市', pref: 'じょうそう（茨城県）', type: 'city' },
+  { name: '常陸太田市', pref: 'ひたちおおた（茨城県）', type: 'city' },
+  { name: '高萩市', pref: 'たかはぎ（茨城県）', type: 'city' },
+  { name: '北茨城市', pref: 'きたいばらき（茨城県）', type: 'city' },
+  { name: '笠間市', pref: 'かさま（茨城県）', type: 'city' },
+  { name: '取手市', pref: 'とりで（茨城県）', type: 'city' },
+  { name: '牛久市', pref: 'うしく（茨城県）', type: 'city' },
+  { name: 'つくば市', pref: 'つくば（茨城県）', type: 'city' },
+  { name: 'ひたちなか市', pref: 'ひたちなか（茨城県）', type: 'city' },
+  { name: '鹿嶋市', pref: 'かしま（茨城県）', type: 'city' },
+  { name: '潮来市', pref: 'いたこ（茨城県）', type: 'city' },
+  { name: '守谷市', pref: 'もりや（茨城県）', type: 'city' },
+  { name: '常陸大宮市', pref: 'ひたちおおみや（茨城県）', type: 'city' },
+  { name: '那珂市', pref: 'なか（茨城県）', type: 'city' },
+  { name: '筑西市', pref: 'ちくせい（茨城県）', type: 'city' },
+  { name: '坂東市', pref: 'ばんどう（茨城県）', type: 'city' },
+  { name: '稲敷市', pref: 'いなしき（茨城県）', type: 'city' },
+  { name: 'かすみがうら市', pref: 'かすみがうら（茨城県）', type: 'city' },
+  { name: '桜川市', pref: 'さくらがわ（茨城県）', type: 'city' },
+  { name: '神栖市', pref: 'かみす（茨城県）', type: 'city' },
+  { name: '行方市', pref: 'なめがた（茨城県）', type: 'city' },
+  { name: '鉾田市', pref: 'ほこた（茨城県）', type: 'city' },
+  { name: 'つくばみらい市', pref: 'つくばみらい（茨城県）', type: 'city' },
+  { name: '小美玉市', pref: 'おみたま（茨城県）', type: 'city' },
+  { name: '茨城町', pref: 'いばらき・まち（茨城県）', type: 'town' },
+{ name: '大洗町', pref: 'おおあらい・まち（茨城県）', type: 'town' },
+{ name: '城里町', pref: 'しろさと・まち（茨城県）', type: 'town' },
+{ name: '大子町', pref: 'だいご・まち（茨城県）', type: 'town' },
+{ name: '阿見町', pref: 'あみ・まち（茨城県）', type: 'town' },
+{ name: '河内町', pref: 'かわち・まち（茨城県）', type: 'town' },
+{ name: '八千代町', pref: 'やちよ・まち（茨城県）', type: 'town' },
+{ name: '五霞町', pref: 'ごか・まち（茨城県）', type: 'town' },
+{ name: '境町', pref: 'さかい・まち（茨城県）', type: 'town' },
+{ name: '利根町', pref: 'とね・まち（茨城県）', type: 'town' },
+{ name: '東海村', pref: 'とうかい（茨城県）', type: 'village' },
+{ name: '美浦村', pref: 'みほ（茨城県）', type: 'village' },
+
+
+  // 栃木県
+  { name: '宇都宮市', pref: 'うつのみや（栃木県）', type: 'city' },
+  { name: '足利市', pref: 'あしかが（栃木県）', type: 'city' },
+  { name: '栃木市', pref: 'とちぎ（栃木県）', type: 'city' },
+  { name: '佐野市', pref: 'さの（栃木県）', type: 'city' },
+  { name: '鹿沼市', pref: 'かぬま（栃木県）', type: 'city' },
+  { name: '日光市', pref: 'にっこう（栃木県）', type: 'city' },
+  { name: '小山市', pref: 'おやま（栃木県）', type: 'city' },
+  { name: '真岡市', pref: 'もおか（栃木県）', type: 'city' },
+  { name: '大田原市', pref: 'おおたわら（栃木県）', type: 'city' },
+  { name: '矢板市', pref: 'やいた（栃木県）', type: 'city' },
+  { name: '那須塩原市', pref: 'なすしおばら（栃木県）', type: 'city' },
+  { name: 'さくら市', pref: 'さくら（栃木県）', type: 'city' },
+  { name: '那須烏山市', pref: 'なすからすやま（栃木県）', type: 'city' },
+  { name: '下野市', pref: 'しもつけ（栃木県）', type: 'city' },
+  { name: '上三川町', pref: 'かみのかわ・まち（栃木県）', type: 'town' },
+{ name: '益子町', pref: 'ましこ・まち（栃木県）', type: 'town' },
+{ name: '茂木町', pref: 'もてぎ・まち（栃木県）', type: 'town' },
+{ name: '市貝町', pref: 'いちかい・まち（栃木県）', type: 'town' },
+{ name: '芳賀町', pref: 'はが・まち（栃木県）', type: 'town' },
+{ name: '壬生町', pref: 'みぶ・まち（栃木県）', type: 'town' },
+{ name: '野木町', pref: 'のぎ・まち（栃木県）', type: 'town' },
+{ name: '塩谷町', pref: 'しおや・まち（栃木県）', type: 'town' },
+{ name: '高根沢町', pref: 'たかねざわ・まち（栃木県）', type: 'town' },
+{ name: '那須町', pref: 'なす・まち（栃木県）', type: 'town' },
+{ name: '那珂川町', pref: 'なかがわ・まち（栃木県）', type: 'town' },
+
+
+  // 群馬県
+  { name: '前橋市', pref: 'まえばし（群馬県）', type: 'city' },
+  { name: '高崎市', pref: 'たかさき（群馬県）', type: 'city' },
+  { name: '桐生市', pref: 'きりゅう（群馬県）', type: 'city' },
+  { name: '伊勢崎市', pref: 'いせさき（群馬県）', type: 'city' },
+  { name: '太田市', pref: 'おおた（群馬県）', type: 'city' },
+  { name: '沼田市', pref: 'ぬまた（群馬県）', type: 'city' },
+  { name: '館林市', pref: 'たてばやし（群馬県）', type: 'city' },
+  { name: '渋川市', pref: 'しぶかわ（群馬県）', type: 'city' },
+  { name: '藤岡市', pref: 'ふじおか（群馬県）', type: 'city' },
+  { name: '富岡市', pref: 'とみおか（群馬県）', type: 'city' },
+  { name: '安中市', pref: 'あんなか（群馬県）', type: 'city' },
+  { name: 'みどり市', pref: 'みどり（群馬県）', type: 'city' },
+  { name: '吉岡町', pref: 'よしおか・まち（群馬県）', type: 'town' },
+{ name: '神流町', pref: 'かんな・まち（群馬県）', type: 'town' },
+{ name: '下仁田町', pref: 'しもにた・まち（群馬県）', type: 'town' },
+{ name: '甘楽町', pref: 'かんら・まち（群馬県）', type: 'town' },
+{ name: '中之条町', pref: 'なかのじょう・まち（群馬県）', type: 'town' },
+{ name: '長野原町', pref: 'ながのはら・まち（群馬県）', type: 'town' },
+{ name: '草津町', pref: 'くさつ・まち（群馬県）', type: 'town' },
+{ name: '東吾妻町', pref: 'ひがしあがつま・まち（群馬県）', type: 'town' },
+{ name: 'みなかみ町', pref: 'みなかみ・まち（群馬県）', type: 'town' },
+{ name: '玉村町', pref: 'たまむら・まち（群馬県）', type: 'town' },
+{ name: '板倉町', pref: 'いたくら・まち（群馬県）', type: 'town' },
+{ name: '明和町', pref: 'めいわ・まち（群馬県）', type: 'town' },
+{ name: '千代田町', pref: 'ちよだ・まち（群馬県）', type: 'town' },
+{ name: '大泉町', pref: 'おおいずみ・まち（群馬県）', type: 'town' },
+{ name: '邑楽町', pref: 'おうら・まち（群馬県）', type: 'town' },
+{ name: '榛東村', pref: 'しんとう（群馬県）', type: 'village' },
+{ name: '上野村', pref: 'うえの（群馬県）', type: 'village' },
+{ name: '南牧村', pref: 'なんもく（群馬県）', type: 'village' },
+{ name: '嬬恋村', pref: 'つまごい（群馬県）', type: 'village' },
+{ name: '高山村', pref: 'たかやま（群馬県）', type: 'village' },
+{ name: '片品村', pref: 'かたしな（群馬県）', type: 'village' },
+{ name: '川場村', pref: 'かわば（群馬県）', type: 'village' },
+{ name: '昭和村', pref: 'しょうわ（群馬県）', type: 'village' },
+
+
+  // 埼玉県
+  { name: 'さいたま市', pref: 'さいたま（埼玉県）', type: 'city' },
+  { name: '川越市', pref: 'かわごえ（埼玉県）', type: 'city' },
+  { name: '熊谷市', pref: 'くまがや（埼玉県）', type: 'city' },
+  { name: '川口市', pref: 'かわぐち（埼玉県）', type: 'city' },
+  { name: '行田市', pref: 'ぎょうだ（埼玉県）', type: 'city' },
+  { name: '秩父市', pref: 'ちちぶ（埼玉県）', type: 'city' },
+  { name: '所沢市', pref: 'ところざわ（埼玉県）', type: 'city' },
+  { name: '飯能市', pref: 'はんのう（埼玉県）', type: 'city' },
+  { name: '加須市', pref: 'かぞ（埼玉県）', type: 'city' },
+  { name: '本庄市', pref: 'ほんじょう（埼玉県）', type: 'city' },
+  { name: '東松山市', pref: 'ひがしまつやま（埼玉県）', type: 'city' },
+  { name: '春日部市', pref: 'かすかべ（埼玉県）', type: 'city' },
+  { name: '狭山市', pref: 'さやま（埼玉県）', type: 'city' },
+  { name: '羽生市', pref: 'はにゅう（埼玉県）', type: 'city' },
+  { name: '鴻巣市', pref: 'こうのす（埼玉県）', type: 'city' },
+  { name: '深谷市', pref: 'ふかや（埼玉県）', type: 'city' },
+  { name: '上尾市', pref: 'あげお（埼玉県）', type: 'city' },
+  { name: '草加市', pref: 'そうか（埼玉県）', type: 'city' },
+  { name: '越谷市', pref: 'こしがや（埼玉県）', type: 'city' },
+  { name: '蕨市', pref: 'わらび（埼玉県）', type: 'city' },
+  { name: '戸田市', pref: 'とだ（埼玉県）', type: 'city' },
+  { name: '入間市', pref: 'いるま（埼玉県）', type: 'city' },
+  { name: '朝霞市', pref: 'あさか（埼玉県）', type: 'city' },
+  { name: '志木市', pref: 'しき（埼玉県）', type: 'city' },
+  { name: '和光市', pref: 'わこう（埼玉県）', type: 'city' },
+  { name: '新座市', pref: 'にいざ（埼玉県）', type: 'city' },
+  { name: '桶川市', pref: 'おけがわ（埼玉県）', type: 'city' },
+  { name: '久喜市', pref: 'くき（埼玉県）', type: 'city' },
+  { name: '北本市', pref: 'きたもと（埼玉県）', type: 'city' },
+  { name: '八潮市', pref: 'やしお（埼玉県）', type: 'city' },
+  { name: '富士見市', pref: 'ふじみ（埼玉県）', type: 'city' },
+  { name: '三郷市', pref: 'みさと（埼玉県）', type: 'city' },
+  { name: '蓮田市', pref: 'はすだ（埼玉県）', type: 'city' },
+  { name: '坂戸市', pref: 'さかど（埼玉県）', type: 'city' },
+  { name: '幸手市', pref: 'さって（埼玉県）', type: 'city' },
+  { name: '鶴ヶ島市', pref: 'つるがしま（埼玉県）', type: 'city' },
+  { name: '日高市', pref: 'ひだか（埼玉県）', type: 'city' },
+  { name: '吉川市', pref: 'よしかわ（埼玉県）', type: 'city' },
+  { name: 'ふじみ野市', pref: 'ふじみの（埼玉県）', type: 'city' },
+  { name: '白岡市', pref: 'しらおか（埼玉県）', type: 'city' },
+   { name: '伊奈町', pref: 'いな・まち（埼玉県）', type: 'town' },
+{ name: '三芳町', pref: 'みよし・まち（埼玉県）', type: 'town' },
+{ name: '毛呂山町', pref: 'もろやま・まち（埼玉県）', type: 'town' },
+{ name: '越生町', pref: 'おごせ・まち（埼玉県）', type: 'town' },
+{ name: '滑川町', pref: 'なめがわ・まち（埼玉県）', type: 'town' },
+{ name: '嵐山町', pref: 'らんざん・まち（埼玉県）', type: 'town' },
+{ name: '小川町', pref: 'おがわ・まち（埼玉県）', type: 'town' },
+{ name: '川島町', pref: 'かわじま・まち（埼玉県）', type: 'town' },
+{ name: '吉見町', pref: 'よしみ・まち（埼玉県）', type: 'town' },
+{ name: '鳩山町', pref: 'はとやま・まち（埼玉県）', type: 'town' },
+{ name: 'ときがわ町', pref: 'ときがわ・まち（埼玉県）', type: 'town' },
+{ name: '横瀬町', pref: 'よこぜ・まち（埼玉県）', type: 'town' },
+{ name: '皆野町', pref: 'みなの・まち（埼玉県）', type: 'town' },
+{ name: '長瀞町', pref: 'ながとろ・まち（埼玉県）', type: 'town' },
+{ name: '小鹿野町', pref: 'おがの・まち（埼玉県）', type: 'town' },
+{ name: '美里町', pref: 'みさと・まち（埼玉県）', type: 'town' },
+{ name: '神川町', pref: 'かみかわ・まち（埼玉県）', type: 'town' },
+{ name: '上里町', pref: 'かみさと・まち（埼玉県）', type: 'town' },
+{ name: '寄居町', pref: 'よりい・まち（埼玉県）', type: 'town' },
+{ name: '宮代町', pref: 'みやしろ・まち（埼玉県）', type: 'town' },
+{ name: '杉戸町', pref: 'すぎと・まち（埼玉県）', type: 'town' },
+{ name: '松伏町', pref: 'まつぶし・まち（埼玉県）', type: 'town' },
+{ name: '東秩父村', pref: 'ひがしちちぶ（埼玉県）', type: 'village' },
+
+
+
+ // 千葉県
+  { name: '千葉市', pref: 'ちば（千葉県）', type: 'city' },
+  { name: '銚子市', pref: 'ちょうし（千葉県）', type: 'city' },
+  { name: '市川市', pref: 'いちかわ（千葉県）', type: 'city' },
+  { name: '船橋市', pref: 'ふなばし（千葉県）', type: 'city' },
+  { name: '館山市', pref: 'たてやま（千葉県）', type: 'city' },
+  { name: '木更津市', pref: 'きさらづ（千葉県）', type: 'city' },
+  { name: '松戸市', pref: 'まつど（千葉県）', type: 'city' },
+  { name: '野田市', pref: 'のだ（千葉県）', type: 'city' },
+  { name: '茂原市', pref: 'もばら（千葉県）', type: 'city' },
+  { name: '成田市', pref: 'なりた（千葉県）', type: 'city' },
+  { name: '佐倉市', pref: 'さくら（千葉県）', type: 'city' },
+  { name: '東金市', pref: 'とうがね（千葉県）', type: 'city' },
+  { name: '旭市', pref: 'あさひ（千葉県）', type: 'city' },
+  { name: '習志野市', pref: 'ならしの（千葉県）', type: 'city' },
+  { name: '柏市', pref: 'かしわ（千葉県）', type: 'city' },
+  { name: '勝浦市', pref: 'かつうら（千葉県）', type: 'city' },
+  { name: '市原市', pref: 'いちはら（千葉県）', type: 'city' },
+  { name: '流山市', pref: 'ながれやま（千葉県）', type: 'city' },
+  { name: '八千代市', pref: 'やちよ（千葉県）', type: 'city' },
+  { name: '我孫子市', pref: 'あびこ（千葉県）', type: 'city' },
+  { name: '鴨川市', pref: 'かもがわ（千葉県）', type: 'city' },
+  { name: '鎌ケ谷市', pref: 'かまがや（千葉県）', type: 'city' },
+  { name: '君津市', pref: 'きみつ（千葉県）', type: 'city' },
+  { name: '富津市', pref: 'ふっつ（千葉県）', type: 'city' },
+  { name: '浦安市', pref: 'うらやす（千葉県）', type: 'city' },
+  { name: '四街道市', pref: 'よつかいどう（千葉県）', type: 'city' },
+  { name: '袖ケ浦市', pref: 'そでがうら（千葉県）', type: 'city' },
+  { name: '八街市', pref: 'やちまた（千葉県）', type: 'city' },
+  { name: '印西市', pref: 'いんざい（千葉県）', type: 'city' },
+  { name: '白井市', pref: 'しろい（千葉県）', type: 'city' },
+  { name: '富里市', pref: 'とみさと（千葉県）', type: 'city' },
+  { name: '南房総市', pref: 'みなみぼうそう（千葉県）', type: 'city' },
+  { name: '匝瑳市', pref: 'そうさ（千葉県）', type: 'city' },
+  { name: '香取市', pref: 'かとり（千葉県）', type: 'city' },
+  { name: '山武市', pref: 'さんむ（千葉県）', type: 'city' },
+  { name: 'いすみ市', pref: 'いすみ（千葉県）', type: 'city' },
+  { name: '大網白里市', pref: 'おおあみしらさと（千葉県）', type: 'city' },
+  { name: '酒々井町', pref: 'しすい・まち（千葉県）', type: 'town' },
+{ name: '栄町', pref: 'さかえ・まち（千葉県）', type: 'town' },
+{ name: '神崎町', pref: 'こうざき・まち（千葉県）', type: 'town' },
+{ name: '多古町', pref: 'たこ・まち（千葉県）', type: 'town' },
+{ name: '東庄町', pref: 'とうのしょう・まち（千葉県）', type: 'town' },
+{ name: '九十九里町', pref: 'くじゅうくり・まち（千葉県）', type: 'town' },
+{ name: '芝山町', pref: 'しばやま・まち（千葉県）', type: 'town' },
+{ name: '横芝光町', pref: 'よこしばひかり・まち（千葉県）', type: 'town' },
+{ name: '一宮町', pref: 'いちのみや・まち（千葉県）', type: 'town' },
+{ name: '睦沢町', pref: 'むつざわ・まち（千葉県）', type: 'town' },
+{ name: '白子町', pref: 'しらこ・まち（千葉県）', type: 'town' },
+{ name: '長柄町', pref: 'ながら・まち（千葉県）', type: 'town' },
+{ name: '長南町', pref: 'ちょうなん・まち（千葉県）', type: 'town' },
+{ name: '大多喜町', pref: 'おおたき・まち（千葉県）', type: 'town' },
+{ name: '御宿町', pref: 'おんじゅく・まち（千葉県）', type: 'town' },
+{ name: '鋸南町', pref: 'きょなん・まち（千葉県）', type: 'town' },
+{ name: '長生村', pref: 'ちょうせい（千葉県）', type: 'village' },
+
+
+  // 東京都
+  { name: '八王子市', pref: 'はちおうじ（東京都）', type: 'city' },
+  { name: '立川市', pref: 'たちかわ（東京都）', type: 'city' },
+  { name: '武蔵野市', pref: 'むさしの（東京都）', type: 'city' },
+  { name: '三鷹市', pref: 'みたか（東京都）', type: 'city' },
+  { name: '青梅市', pref: 'おうめ（東京都）', type: 'city' },
+  { name: '府中市', pref: 'ふちゅう（東京都）', type: 'city' },
+  { name: '昭島市', pref: 'あきしま（東京都）', type: 'city' },
+  { name: '調布市', pref: 'ちょうふ（東京都）', type: 'city' },
+  { name: '町田市', pref: 'まちだ（東京都）', type: 'city' },
+  { name: '小金井市', pref: 'こがねい（東京都）', type: 'city' },
+  { name: '小平市', pref: 'こだいら（東京都）', type: 'city' },
+  { name: '日野市', pref: 'ひの（東京都）', type: 'city' },
+  { name: '東村山市', pref: 'ひがしむらやま（東京都）', type: 'city' },
+  { name: '国分寺市', pref: 'こくぶんじ（東京都）', type: 'city' },
+  { name: '国立市', pref: 'くにたち（東京都）', type: 'city' },
+  { name: '福生市', pref: 'ふっさ（東京都）', type: 'city' },
+  { name: '狛江市', pref: 'こまえ（東京都）', type: 'city' },
+  { name: '東大和市', pref: 'ひがしやまと（東京都）', type: 'city' },
+  { name: '清瀬市', pref: 'きよせ（東京都）', type: 'city' },
+  { name: '東久留米市', pref: 'ひがしくるめ（東京都）', type: 'city' },
+  { name: '武蔵村山市', pref: 'むさしむらやま（東京都）', type: 'city' },
+  { name: '多摩市', pref: 'たま（東京都）', type: 'city' },
+  { name: '稲城市', pref: 'いなぎ（東京都）', type: 'city' },
+  { name: '羽村市', pref: 'はむら（東京都）', type: 'city' },
+  { name: 'あきる野市', pref: 'あきるの（東京都）', type: 'city' },
+  { name: '西東京市', pref: 'にしとうきょう（東京都）', type: 'city' },
+  { name: '瑞穂町', pref: 'みずほ・まち（東京都）', type: 'town' },
+{ name: '日の出町', pref: 'ひので・まち（東京都）', type: 'town' },
+{ name: '奥多摩町', pref: 'おくたま・まち（東京都）', type: 'town' },
+{ name: '大島町', pref: 'おおしま・まち（東京都）', type: 'town' },
+{ name: '八丈町', pref: 'はちじょう・まち（東京都）', type: 'town' },
+{ name: '檜原村', pref: 'ひのはら（東京都）', type: 'village' },
+{ name: '利島村', pref: 'としま（東京都）', type: 'village' },
+{ name: '新島村', pref: 'にいじま（東京都）', type: 'village' },
+{ name: '神津島村', pref: 'こうづしま（東京都）', type: 'village' },
+{ name: '三宅村', pref: 'みやけ（東京都）', type: 'village' },
+{ name: '御蔵島村', pref: 'みくらじま（東京都）', type: 'village' },
+{ name: '青ヶ島村', pref: 'あおがしま（東京都）', type: 'village' },
+{ name: '小笠原村', pref: 'おがさわら（東京都）', type: 'village' },
+
+
+  // 神奈川県
+  { name: '横浜市', pref: 'よこはま（神奈川県）', type: 'city' },
+  { name: '川崎市', pref: 'かわさき（神奈川県）', type: 'city' },
+  { name: '相模原市', pref: 'さがみはら（神奈川県）', type: 'city' },
+  { name: '横須賀市', pref: 'よこすか（神奈川県）', type: 'city' },
+  { name: '平塚市', pref: 'ひらつか（神奈川県）', type: 'city' },
+  { name: '鎌倉市', pref: 'かまくら（神奈川県）', type: 'city' },
+  { name: '藤沢市', pref: 'ふじさわ（神奈川県）', type: 'city' },
+  { name: '小田原市', pref: 'おだわら（神奈川県）', type: 'city' },
+  { name: '茅ヶ崎市', pref: 'ちがさき（神奈川県）', type: 'city' },
+  { name: '逗子市', pref: 'ずし（神奈川県）', type: 'city' },
+  { name: '三浦市', pref: 'みうら（神奈川県）', type: 'city' },
+  { name: '秦野市', pref: 'はだの（神奈川県）', type: 'city' },
+  { name: '厚木市', pref: 'あつぎ（神奈川県）', type: 'city' },
+  { name: '大和市', pref: 'やまと（神奈川県）', type: 'city' },
+  { name: '伊勢原市', pref: 'いせはら（神奈川県）', type: 'city' },
+  { name: '海老名市', pref: 'えびな（神奈川県）', type: 'city' },
+  { name: '座間市', pref: 'ざま（神奈川県）', type: 'city' },
+  { name: '南足柄市', pref: 'みなみあしがら（神奈川県）', type: 'city' },
+  { name: '綾瀬市', pref: 'あやせ（神奈川県）', type: 'city' },
+  { name: '葉山町', pref: 'はやま・まち（神奈川県）', type: 'town' },
+{ name: '寒川町', pref: 'さむかわ・まち（神奈川県）', type: 'town' },
+{ name: '大磯町', pref: 'おおいそ・まち（神奈川県）', type: 'town' },
+{ name: '二宮町', pref: 'にのみや・まち（神奈川県）', type: 'town' },
+{ name: '中井町', pref: 'なかい・まち（神奈川県）', type: 'town' },
+{ name: '大井町', pref: 'おおい・まち（神奈川県）', type: 'town' },
+{ name: '松田町', pref: 'まつだ・まち（神奈川県）', type: 'town' },
+{ name: '山北町', pref: 'やまきた・まち（神奈川県）', type: 'town' },
+{ name: '開成町', pref: 'かいせい・まち（神奈川県）', type: 'town' },
+{ name: '箱根町', pref: 'はこね・まち（神奈川県）', type: 'town' },
+{ name: '真鶴町', pref: 'まなづる・まち（神奈川県）', type: 'town' },
+{ name: '湯河原町', pref: 'ゆがわら・まち（神奈川県）', type: 'town' },
+{ name: '愛川町', pref: 'あいかわ・まち（神奈川県）', type: 'town' },
+{ name: '清川村', pref: 'きよかわ（神奈川県）', type: 'village' },
+
+
+  // 新潟県
+  { name: '新潟市', pref: 'にいがた（新潟県）', type: 'city' },
+  { name: '長岡市', pref: 'ながおか（新潟県）', type: 'city' },
+  { name: '三条市', pref: 'さんじょう（新潟県）', type: 'city' },
+  { name: '柏崎市', pref: 'かしわざき（新潟県）', type: 'city' },
+  { name: '新発田市', pref: 'しばた（新潟県）', type: 'city' },
+  { name: '小千谷市', pref: 'おぢや（新潟県）', type: 'city' },
+  { name: '加茂市', pref: 'かも（新潟県）', type: 'city' },
+  { name: '十日町市', pref: 'とおかまち（新潟県）', type: 'city' },
+  { name: '見附市', pref: 'みつけ（新潟県）', type: 'city' },
+  { name: '村上市', pref: 'むらかみ（新潟県）', type: 'city' },
+  { name: '燕市', pref: 'つばめ（新潟県）', type: 'city' },
+  { name: '糸魚川市', pref: 'いといがわ（新潟県）', type: 'city' },
+  { name: '妙高市', pref: 'みょうこう（新潟県）', type: 'city' },
+  { name: '五泉市', pref: 'ごせん（新潟県）', type: 'city' },
+  { name: '上越市', pref: 'じょうえつ（新潟県）', type: 'city' },
+  { name: '阿賀野市', pref: 'あがの（新潟県）', type: 'city' },
+  { name: '佐渡市', pref: 'さど（新潟県）', type: 'city' },
+  { name: '魚沼市', pref: 'うおぬま（新潟県）', type: 'city' },
+  { name: '南魚沼市', pref: 'みなみうおぬま（新潟県）', type: 'city' },
+  { name: '胎内市', pref: 'たいない（新潟県）', type: 'city' },
+  { name: '聖籠町', pref: 'せいろう・まち（新潟県）', type: 'town' },
+  { name: '田上町', pref: 'たがみ・まち（新潟県）', type: 'town' },
+  { name: '阿賀町', pref: 'あが・まち（新潟県）', type: 'town' },
+  { name: '出雲崎町', pref: 'いずもざき・まち（新潟県）', type: 'town' },
+  { name: '湯沢町', pref: 'ゆざわ・まち（新潟県）', type: 'town' },
+  { name: '津南町', pref: 'つなん・まち（新潟県）', type: 'town' },
+{ name: '弥彦村', pref: 'やひこ（新潟県）', type: 'village' },
+{ name: '刈羽村', pref: 'かりわ（新潟県）', type: 'village' },
+{ name: '関川村', pref: 'せきかわ（新潟県）', type: 'village' },
+{ name: '粟島浦村', pref: 'あわしまうら（新潟県）', type: 'village' },
+
+
+  // 富山県
+  { name: '富山市', pref: 'とやま（富山県）', type: 'city' },
+  { name: '高岡市', pref: 'たかおか（富山県）', type: 'city' },
+  { name: '魚津市', pref: 'うおづ（富山県）', type: 'city' },
+  { name: '氷見市', pref: 'ひみ（富山県）', type: 'city' },
+  { name: '滑川市', pref: 'なめりかわ（富山県）', type: 'city' },
+  { name: '黒部市', pref: 'くろべ（富山県）', type: 'city' },
+  { name: '砺波市', pref: 'となみ（富山県）', type: 'city' },
+  { name: '小矢部市', pref: 'おやべ（富山県）', type: 'city' },
+  { name: '南砺市', pref: 'なんと（富山県）', type: 'city' },
+  { name: '射水市', pref: 'いみず（富山県）', type: 'city' },
+  { name: '上市町', pref: 'かみいち・まち（富山県）', type: 'town' },
+{ name: '立山町', pref: 'たてやま・まち（富山県）', type: 'town' },
+{ name: '入善町', pref: 'にゅうぜん・まち（富山県）', type: 'town' },
+{ name: '朝日町', pref: 'あさひ・まち（富山県）', type: 'town' },
+{ name: '舟橋村', pref: 'ふなはし（富山県）', type: 'village' },
+
+
+  // 石川県
+  { name: '金沢市', pref: 'かなざわ（石川県）', type: 'city' },
+  { name: '七尾市', pref: 'ななお（石川県）', type: 'city' },
+  { name: '小松市', pref: 'こまつ（石川県）', type: 'city' },
+  { name: '輪島市', pref: 'わじま（石川県）', type: 'city' },
+  { name: '珠洲市', pref: 'すず（石川県）', type: 'city' },
+  { name: '加賀市', pref: 'かが（石川県）', type: 'city' },
+  { name: '羽咋市', pref: 'はくい（石川県）', type: 'city' },
+  { name: 'かほく市', pref: 'かほく（石川県）', type: 'city' },
+  { name: '白山市', pref: 'はくさん（石川県）', type: 'city' },
+  { name: '能美市', pref: 'のみ（石川県）', type: 'city' },
+  { name: '野々市市', pref: 'ののいち（石川県）', type: 'city' },
+  { name: '川北町', pref: 'かわきた・まち（石川県）', type: 'town' },
+{ name: '津幡町', pref: 'つばた・まち（石川県）', type: 'town' },
+{ name: '内灘町', pref: 'うちなだ・まち（石川県）', type: 'town' },
+{ name: '志賀町', pref: 'しか・まち（石川県）', type: 'town' },
+{ name: '宝達志水町', pref: 'ほうだつしみず・ちょう（石川県）', type: 'town' },
+{ name: '中能登町', pref: 'なかのと・まち（石川県）', type: 'town' },
+{ name: '穴水町', pref: 'あなみず・まち（石川県）', type: 'town' },
+{ name: '能登町', pref: 'のと・ちょう（石川県）', type: 'town' },
+
+
+  // 福井県
+  { name: '福井市', pref: 'ふくい（福井県）', type: 'city' },
+  { name: '敦賀市', pref: 'つるが（福井県）', type: 'city' },
+  { name: '小浜市', pref: 'おばま（福井県）', type: 'city' },
+  { name: '大野市', pref: 'おおの（福井県）', type: 'city' },
+  { name: '勝山市', pref: 'かつやま（福井県）', type: 'city' },
+  { name: '鯖江市', pref: 'さばえ（福井県）', type: 'city' },
+  { name: 'あわら市', pref: 'あわら（福井県）', type: 'city' },
+  { name: '越前市', pref: 'えちぜん（福井県）', type: 'city' },
+  { name: '坂井市', pref: 'さかい（福井県）', type: 'city' },
+  { name: '永平寺町', pref: 'えいへいじ・ちょう（福井県）', type: 'town' },
+{ name: '池田町', pref: 'いけだ・ちょう（福井県）', type: 'town' },
+{ name: '南越前町', pref: 'みなみえちぜん・ちょう（福井県）', type: 'town' },
+{ name: '越前町', pref: 'えちぜん・ちょう（福井県）', type: 'town' },
+{ name: '美浜町', pref: 'みはま・ちょう（福井県）', type: 'town' },
+{ name: '高浜町', pref: 'たかはま・ちょう（福井県）', type: 'town' },
+{ name: 'おおい町', pref: 'おおい・ちょう（福井県）', type: 'town' },
+{ name: '若狭町', pref: 'わかさ・ちょう（福井県）', type: 'town' },
+
+
+  // 山梨県
+  { name: '甲府市', pref: 'こうふ（山梨県）', type: 'city' },
+  { name: '富士吉田市', pref: 'ふじよしだ（山梨県）', type: 'city' },
+  { name: '都留市', pref: 'つる（山梨県）', type: 'city' },
+  { name: '山梨市', pref: 'やまなし（山梨県）', type: 'city' },
+  { name: '大月市', pref: 'おおつき（山梨県）', type: 'city' },
+  { name: '韮崎市', pref: 'にらさき（山梨県）', type: 'city' },
+  { name: '南アルプス市', pref: 'みなみあるぷす（山梨県）', type: 'city' },
+  { name: '北杜市', pref: 'ほくと（山梨県）', type: 'city' },
+  { name: '甲斐市', pref: 'かい（山梨県）', type: 'city' },
+  { name: '笛吹市', pref: 'ふえふき（山梨県）', type: 'city' },
+  { name: '上野原市', pref: 'うえのはら（山梨県）', type: 'city' },
+  { name: '甲州市', pref: 'こうしゅう（山梨県）', type: 'city' },
+  { name: '中央市', pref: 'ちゅうおう（山梨県）', type: 'city' },
+  { name: '市川三郷町', pref: 'いちかわみさと・ちょう（山梨県）', type: 'town' },
+{ name: '早川町', pref: 'はやかわ・ちょう（山梨県）', type: 'town' },
+{ name: '身延町', pref: 'みのぶ・ちょう（山梨県）', type: 'town' },
+{ name: '南部町', pref: 'なんぶ・ちょう（山梨県）', type: 'town' },
+{ name: '富士川町', pref: 'ふじかわ・ちょう（山梨県）', type: 'town' },
+{ name: '昭和町', pref: 'しょうわ・ちょう（山梨県）', type: 'town' },
+{ name: '西桂町', pref: 'にしかつら・ちょう（山梨県）', type: 'town' },
+{ name: '富士河口湖町', pref: 'ふじかわぐちこ・まち（山梨県）', type: 'town' },
+{ name: '道志村', pref: 'どうし（山梨県）', type: 'village' },
+{ name: '忍野村', pref: 'おしの（山梨県）', type: 'village' },
+{ name: '山中湖村', pref: 'やまなかこ（山梨県）', type: 'village' },
+{ name: '鳴沢村', pref: 'なるさわ（山梨県）', type: 'village' },
+{ name: '小菅村', pref: 'こすげ（山梨県）', type: 'village' },
+{ name: '丹波山村', pref: 'たばやま（山梨県）', type: 'village' },
+
+
+  // 長野県
+  { name: '長野市', pref: 'ながの（長野県）', type: 'city' },
+  { name: '松本市', pref: 'まつもと（長野県）', type: 'city' },
+  { name: '上田市', pref: 'うえだ（長野県）', type: 'city' },
+  { name: '岡谷市', pref: 'おかや（長野県）', type: 'city' },
+  { name: '飯田市', pref: 'いいだ（長野県）', type: 'city' },
+  { name: '諏訪市', pref: 'すわ（長野県）', type: 'city' },
+  { name: '須坂市', pref: 'すざか（長野県）', type: 'city' },
+  { name: '小諸市', pref: 'こもろ（長野県）', type: 'city' },
+  { name: '伊那市', pref: 'いな（長野県）', type: 'city' },
+  { name: '駒ヶ根市', pref: 'こまがね（長野県）', type: 'city' },
+  { name: '中野市', pref: 'なかの（長野県）', type: 'city' },
+  { name: '大町市', pref: 'おおまち（長野県）', type: 'city' },
+  { name: '飯山市', pref: 'いいやま（長野県）', type: 'city' },
+  { name: '茅野市', pref: 'ちの（長野県）', type: 'city' },
+  { name: '塩尻市', pref: 'しおじり（長野県）', type: 'city' },
+  { name: '佐久市', pref: 'さく（長野県）', type: 'city' },
+  { name: '千曲市', pref: 'ちくま（長野県）', type: 'city' },
+  { name: '東御市', pref: 'とうみ（長野県）', type: 'city' },
+  { name: '安曇野市', pref: 'あづみの（長野県）', type: 'city' },
+  { name: '小海町', pref: 'こうみ・まち（長野県）', type: 'town' },
+  { name: '佐久穂町', pref: 'さくほ・まち（長野県）', type: 'town' },
+  { name: '軽井沢町', pref: 'かるいざわ・まち（長野県）', type: 'town' },
+  { name: '御代田町', pref: 'みよた・まち（長野県）', type: 'town' },
+  { name: '立科町', pref: 'たてしな・まち（長野県）', type: 'town' },
+  { name: '長和町', pref: 'ながわ・まち（長野県）', type: 'town' },
+  { name: '下諏訪町', pref: 'しもすわ・まち（長野県）', type: 'town' },
+  { name: '富士見町', pref: 'ふじみ・まち（長野県）', type: 'town' },
+  { name: '辰野町', pref: 'たつの・まち（長野県）', type: 'town' },
+  { name: '箕輪町', pref: 'みのわ・まち（長野県）', type: 'town' },
+  { name: '飯島町', pref: 'いいじま・まち（長野県）', type: 'town' },
+  { name: '松川町', pref: 'まつかわ・まち（長野県）', type: 'town' },
+  { name: '高森町', pref: 'たかもり・まち（長野県）', type: 'town' },
+  { name: '阿南町', pref: 'あなん・ちょう（長野県）', type: 'town' },
+  { name: '上松町', pref: 'あげまつ・まち（長野県）', type: 'town' },
+  { name: '南木曽町', pref: 'なぎそ・まち（長野県）', type: 'town' },
+  { name: '木曽町', pref: 'きそ・まち（長野県）', type: 'town' },
+  { name: '池田町', pref: 'いけだ・まち（長野県）', type: 'town' },
+  { name: '坂城町', pref: 'さかき・まち（長野県）', type: 'town' },
+  { name: '小布施町', pref: 'おぶせ・まち（長野県）', type: 'town' },
+  { name: '山ノ内町', pref: 'やまのうち・まち（長野県）', type: 'town' },
+  { name: '信濃町', pref: 'しなの・まち（長野県）', type: 'town' },
+  { name: '飯綱町', pref: 'いいづな・まち（長野県）', type: 'town' },
+{ name: '川上村', pref: 'かわかみ（長野県）', type: 'village' },
+{ name: '南牧村', pref: 'みなみまき（長野県）', type: 'village' },
+{ name: '南相木村', pref: 'みなみあいき（長野県）', type: 'village' },
+{ name: '北相木村', pref: 'きたあいき（長野県）', type: 'village' },
+{ name: '青木村', pref: 'あおき（長野県）', type: 'village' },
+{ name: '原村', pref: 'はら（長野県）', type: 'village' },
+{ name: '南箕輪村', pref: 'みなみみのわ（長野県）', type: 'village' },
+{ name: '中川村', pref: 'なかがわ（長野県）', type: 'village' },
+{ name: '宮田村', pref: 'みやだ（長野県）', type: 'village' },
+{ name: '阿智村', pref: 'あち（長野県）', type: 'village' },
+{ name: '平谷村', pref: 'ひらや（長野県）', type: 'village' },
+{ name: '根羽村', pref: 'ねば（長野県）', type: 'village' },
+{ name: '下條村', pref: 'しもじょう（長野県）', type: 'village' },
+{ name: '売木村', pref: 'うるぎ（長野県）', type: 'village' },
+{ name: '天龍村', pref: 'てんりゅう（長野県）', type: 'village' },
+{ name: '泰阜村', pref: 'やすおか（長野県）', type: 'village' },
+{ name: '喬木村', pref: 'たかぎ（長野県）', type: 'village' },
+{ name: '豊丘村', pref: 'とよおか（長野県）', type: 'village' },
+{ name: '大鹿村', pref: 'おおしか（長野県）', type: 'village' },
+{ name: '木祖村', pref: 'きそ（長野県）', type: 'village' },
+{ name: '王滝村', pref: 'おうたき（長野県）', type: 'village' },
+{ name: '大桑村', pref: 'おおくわ（長野県）', type: 'village' },
+{ name: '麻績村', pref: 'おみ（長野県）', type: 'village' },
+{ name: '生坂村', pref: 'いくさか（長野県）', type: 'village' },
+{ name: '山形村', pref: 'やまがた（長野県）', type: 'village' },
+{ name: '朝日村', pref: 'あさひ（長野県）', type: 'village' },
+{ name: '筑北村', pref: 'ちくほく（長野県）', type: 'village' },
+{ name: '松川村', pref: 'まつかわ（長野県）', type: 'village' },
+{ name: '白馬村', pref: 'はくば（長野県）', type: 'village' },
+{ name: '小谷村', pref: 'おたり（長野県）', type: 'village' },
+{ name: '高山村', pref: 'たかやま（長野県）', type: 'village' },
+{ name: '木島平村', pref: 'きじまだいら（長野県）', type: 'village' },
+{ name: '野沢温泉村', pref: 'のざわおんせん（長野県）', type: 'village' },
+{ name: '小川村', pref: 'おがわ（長野県）', type: 'village' },
+{ name: '栄村', pref: 'さかえ（長野県）', type: 'village' },
+
+
+  // 岐阜県
+  { name: '岐阜市', pref: 'ぎふ（岐阜県）', type: 'city' },
+  { name: '大垣市', pref: 'おおがき（岐阜県）', type: 'city' },
+  { name: '高山市', pref: 'たかやま（岐阜県）', type: 'city' },
+  { name: '多治見市', pref: 'たじみ（岐阜県）', type: 'city' },
+  { name: '関市', pref: 'せき（岐阜県）', type: 'city' },
+  { name: '中津川市', pref: 'なかつがわ（岐阜県）', type: 'city' },
+  { name: '美濃市', pref: 'みの（岐阜県）', type: 'city' },
+  { name: '瑞浪市', pref: 'みずなみ（岐阜県）', type: 'city' },
+  { name: '羽島市', pref: 'はしま（岐阜県）', type: 'city' },
+  { name: '恵那市', pref: 'えな（岐阜県）', type: 'city' },
+  { name: '美濃加茂市', pref: 'みのかも（岐阜県）', type: 'city' },
+  { name: '土岐市', pref: 'とき（岐阜県）', type: 'city' },
+  { name: '各務原市', pref: 'かかみがはら（岐阜県）', type: 'city' },
+  { name: '可児市', pref: 'かに（岐阜県）', type: 'city' },
+  { name: '山県市', pref: 'やまがた（岐阜県）', type: 'city' },
+  { name: '瑞穂市', pref: 'みずほ（岐阜県）', type: 'city' },
+  { name: '飛騨市', pref: 'ひだ（岐阜県）', type: 'city' },
+  { name: '本巣市', pref: 'もとす（岐阜県）', type: 'city' },
+  { name: '郡上市', pref: 'ぐじょう（岐阜県）', type: 'city' },
+  { name: '下呂市', pref: 'げろ（岐阜県）', type: 'city' },
+  { name: '海津市', pref: 'かいづ（岐阜県）', type: 'city' },
+  { name: '岐南町', pref: 'ぎなん・ちょう（岐阜県）', type: 'town' },
+{ name: '笠松町', pref: 'かさまつ・ちょう（岐阜県）', type: 'town' },
+{ name: '養老町', pref: 'ようろう・ちょう（岐阜県）', type: 'town' },
+{ name: '垂井町', pref: 'たるい・ちょう（岐阜県）', type: 'town' },
+{ name: '関ケ原町', pref: 'せきがはら・ちょう（岐阜県）', type: 'town' },
+{ name: '神戸町', pref: 'ごうど・ちょう（岐阜県）', type: 'town' },
+{ name: '輪之内町', pref: 'わのうち・ちょう（岐阜県）', type: 'town' },
+{ name: '安八町', pref: 'あんぱち・ちょう（岐阜県）', type: 'town' },
+{ name: '揖斐川町', pref: 'いびがわ・ちょう（岐阜県）', type: 'town' },
+{ name: '大野町', pref: 'おおの・ちょう（岐阜県）', type: 'town' },
+{ name: '池田町', pref: 'いけだ・ちょう（岐阜県）', type: 'town' },
+{ name: '北方町', pref: 'きたがた・ちょう（岐阜県）', type: 'town' },
+{ name: '坂祝町', pref: 'さかほぎ・ちょう（岐阜県）', type: 'town' },
+{ name: '富加町', pref: 'とみか・ちょう（岐阜県）', type: 'town' },
+{ name: '川辺町', pref: 'かわべ・ちょう（岐阜県）', type: 'town' },
+{ name: '七宗町', pref: 'ひちそう・ちょう（岐阜県）', type: 'town' },
+{ name: '八百津町', pref: 'やおつ・ちょう（岐阜県）', type: 'town' },
+{ name: '白川町', pref: 'しらかわ・ちょう（岐阜県）', type: 'town' },
+{ name: '御嵩町', pref: 'みたけ・ちょう（岐阜県）', type: 'town' },
+{ name: '東白川村', pref: 'ひがししらかわ（岐阜県）', type: 'village' },
+{ name: '白川村', pref: 'しらかわ（岐阜県）', type: 'village' },
+
+
+  // 静岡県
+  { name: '静岡市', pref: 'しずおか（静岡県）', type: 'city' },
+  { name: '浜松市', pref: 'はままつ（静岡県）', type: 'city' },
+  { name: '沼津市', pref: 'ぬまづ（静岡県）', type: 'city' },
+  { name: '熱海市', pref: 'あたみ（静岡県）', type: 'city' },
+  { name: '三島市', pref: 'みしま（静岡県）', type: 'city' },
+  { name: '富士宮市', pref: 'ふじのみや（静岡県）', type: 'city' },
+  { name: '伊東市', pref: 'いとう（静岡県）', type: 'city' },
+  { name: '島田市', pref: 'しまだ（静岡県）', type: 'city' },
+  { name: '富士市', pref: 'ふじ（静岡県）', type: 'city' },
+  { name: '磐田市', pref: 'いわた（静岡県）', type: 'city' },
+  { name: '焼津市', pref: 'やいづ（静岡県）', type: 'city' },
+  { name: '掛川市', pref: 'かけがわ（静岡県）', type: 'city' },
+  { name: '藤枝市', pref: 'ふじえだ（静岡県）', type: 'city' },
+  { name: '御殿場市', pref: 'ごてんば（静岡県）', type: 'city' },
+  { name: '袋井市', pref: 'ふくろい（静岡県）', type: 'city' },
+  { name: '下田市', pref: 'しもだ（静岡県）', type: 'city' },
+  { name: '裾野市', pref: 'すその（静岡県）', type: 'city' },
+  { name: '湖西市', pref: 'こさい（静岡県）', type: 'city' },
+  { name: '伊豆市', pref: 'いず（静岡県）', type: 'city' },
+  { name: '御前崎市', pref: 'おまえざき（静岡県）', type: 'city' },
+  { name: '菊川市', pref: 'きくがわ（静岡県）', type: 'city' },
+  { name: '伊豆の国市', pref: 'いずのくに（静岡県）', type: 'city' },
+  { name: '牧之原市', pref: 'まきのはら（静岡県）', type: 'city' },
+  { name: '東伊豆町', pref: 'ひがしいず・ちょう（静岡県）', type: 'town' },
+{ name: '河津町', pref: 'かわづ・ちょう（静岡県）', type: 'town' },
+{ name: '南伊豆町', pref: 'みなみいず・ちょう（静岡県）', type: 'town' },
+{ name: '松崎町', pref: 'まつざき・ちょう（静岡県）', type: 'town' },
+{ name: '西伊豆町', pref: 'にしいず・ちょう（静岡県）', type: 'town' },
+{ name: '函南町', pref: 'かんなみ・ちょう（静岡県）', type: 'town' },
+{ name: '清水町', pref: 'しみず・ちょう（静岡県）', type: 'town' },
+{ name: '長泉町', pref: 'ながいずみ・ちょう（静岡県）', type: 'town' },
+{ name: '小山町', pref: 'おやま・ちょう（静岡県）', type: 'town' },
+{ name: '吉田町', pref: 'よしだ・ちょう（静岡県）', type: 'town' },
+{ name: '川根本町', pref: 'かわねほん・ちょう（静岡県）', type: 'town' },
+{ name: '森町', pref: 'もり・まち（静岡県）', type: 'town' },
+
+
+  // 愛知県
+  { name: '名古屋市', pref: 'なごや（愛知県）', type: 'city' },
+  { name: '豊橋市', pref: 'とよはし（愛知県）', type: 'city' },
+  { name: '岡崎市', pref: 'おかざき（愛知県）', type: 'city' },
+  { name: '一宮市', pref: 'いちのみや（愛知県）', type: 'city' },
+  { name: '瀬戸市', pref: 'せと（愛知県）', type: 'city' },
+  { name: '半田市', pref: 'はんだ（愛知県）', type: 'city' },
+  { name: '春日井市', pref: 'かすがい（愛知県）', type: 'city' },
+  { name: '豊川市', pref: 'とよかわ（愛知県）', type: 'city' },
+  { name: '津島市', pref: 'つしま（愛知県）', type: 'city' },
+  { name: '碧南市', pref: 'へきなん（愛知県）', type: 'city' },
+  { name: '刈谷市', pref: 'かりや（愛知県）', type: 'city' },
+  { name: '豊田市', pref: 'とよた（愛知県）', type: 'city' },
+  { name: '安城市', pref: 'あんじょう（愛知県）', type: 'city' },
+  { name: '西尾市', pref: 'にしお（愛知県）', type: 'city' },
+  { name: '蒲郡市', pref: 'がまごおり（愛知県）', type: 'city' },
+  { name: '犬山市', pref: 'いぬやま（愛知県）', type: 'city' },
+  { name: '常滑市', pref: 'とこなめ（愛知県）', type: 'city' },
+  { name: '江南市', pref: 'こうなん（愛知県）', type: 'city' },
+  { name: '小牧市', pref: 'こまき（愛知県）', type: 'city' },
+  { name: '稲沢市', pref: 'いなざわ（愛知県）', type: 'city' },
+  { name: '新城市', pref: 'しんしろ（愛知県）', type: 'city' },
+  { name: '東海市', pref: 'とうかい（愛知県）', type: 'city' },
+  { name: '大府市', pref: 'おおぶ（愛知県）', type: 'city' },
+  { name: '知多市', pref: 'ちた（愛知県）', type: 'city' },
+  { name: '知立市', pref: 'ちりゅう（愛知県）', type: 'city' },
+  { name: '尾張旭市', pref: 'おわりあさひ（愛知県）', type: 'city' },
+  { name: '高浜市', pref: 'たかはま（愛知県）', type: 'city' },
+  { name: '岩倉市', pref: 'いわくら（愛知県）', type: 'city' },
+  { name: '豊明市', pref: 'とよあけ（愛知県）', type: 'city' },
+  { name: '日進市', pref: 'にっしん（愛知県）', type: 'city' },
+  { name: '田原市', pref: 'たはら（愛知県）', type: 'city' },
+  { name: '愛西市', pref: 'あいさい（愛知県）', type: 'city' },
+  { name: '清須市', pref: 'きよす（愛知県）', type: 'city' },
+  { name: '北名古屋市', pref: 'きたなごや（愛知県）', type: 'city' },
+  { name: '弥富市', pref: 'やとみ（愛知県）', type: 'city' },
+  { name: 'みよし市', pref: 'みよし（愛知県）', type: 'city' },
+  { name: 'あま市', pref: 'あま（愛知県）', type: 'city' },
+  { name: '長久手市', pref: 'ながくて（愛知県）', type: 'city' },
+  { name: '東郷町', pref: 'とうごう・ちょう（愛知県）', type: 'town' },
+{ name: '豊山町', pref: 'とよやま・ちょう（愛知県）', type: 'town' },
+{ name: '大口町', pref: 'おおぐち・ちょう（愛知県）', type: 'town' },
+{ name: '扶桑町', pref: 'ふそう・ちょう（愛知県）', type: 'town' },
+{ name: '大治町', pref: 'おおはる・ちょう（愛知県）', type: 'town' },
+{ name: '蟹江町', pref: 'かにえ・ちょう（愛知県）', type: 'town' },
+{ name: '阿久比町', pref: 'あぐい・ちょう（愛知県）', type: 'town' },
+{ name: '東浦町', pref: 'ひがしうら・ちょう（愛知県）', type: 'town' },
+{ name: '南知多町', pref: 'みなみちた・ちょう（愛知県）', type: 'town' },
+{ name: '美浜町', pref: 'みはま・ちょう（愛知県）', type: 'town' },
+{ name: '武豊町', pref: 'たけとよ・ちょう（愛知県）', type: 'town' },
+{ name: '幸田町', pref: 'こうた・ちょう（愛知県）', type: 'town' },
+{ name: '設楽町', pref: 'したら・ちょう（愛知県）', type: 'town' },
+{ name: '東栄町', pref: 'とうえい・ちょう（愛知県）', type: 'town' },
+{ name: '飛島村', pref: 'とびしま（愛知県）', type: 'village' },
+{ name: '豊根村', pref: 'とよね（愛知県）', type: 'village' },
+
+
+  // 三重県
+  { name: '津市', pref: 'つ（三重県）', type: 'city' },
+  { name: '四日市市', pref: 'よっかいち（三重県）', type: 'city' },
+  { name: '伊勢市', pref: 'いせ（三重県）', type: 'city' },
+  { name: '松阪市', pref: 'まつさか（三重県）', type: 'city' },
+  { name: '桑名市', pref: 'くわな（三重県）', type: 'city' },
+  { name: '鈴鹿市', pref: 'すずか（三重県）', type: 'city' },
+  { name: '名張市', pref: 'なばり（三重県）', type: 'city' },
+  { name: '尾鷲市', pref: 'おわせ（三重県）', type: 'city' },
+  { name: '亀山市', pref: 'かめやま（三重県）', type: 'city' },
+  { name: '鳥羽市', pref: 'とば（三重県）', type: 'city' },
+  { name: '熊野市', pref: 'くまの（三重県）', type: 'city' },
+  { name: 'いなべ市', pref: 'いなべ（三重県）', type: 'city' },
+  { name: '志摩市', pref: 'しま（三重県）', type: 'city' },
+  { name: '伊賀市', pref: 'いが（三重県）', type: 'city' },
+  { name: '木曽岬町', pref: 'きそさき・ちょう（三重県）', type: 'town' },
+{ name: '東員町', pref: 'とういん・ちょう（三重県）', type: 'town' },
+{ name: '菰野町', pref: 'こもの・ちょう（三重県）', type: 'town' },
+{ name: '朝日町', pref: 'あさひ・ちょう（三重県）', type: 'town' },
+{ name: '川越町', pref: 'かわごえ・ちょう（三重県）', type: 'town' },
+{ name: '多気町', pref: 'たき・ちょう（三重県）', type: 'town' },
+{ name: '明和町', pref: 'めいわ・ちょう（三重県）', type: 'town' },
+{ name: '大台町', pref: 'おおだい・ちょう（三重県）', type: 'town' },
+{ name: '玉城町', pref: 'たまき・ちょう（三重県）', type: 'town' },
+{ name: '度会町', pref: 'わたらい・ちょう（三重県）', type: 'town' },
+{ name: '大紀町', pref: 'たいき・ちょう（三重県）', type: 'town' },
+{ name: '南伊勢町', pref: 'みなみいせ・ちょう（三重県）', type: 'town' },
+{ name: '紀北町', pref: 'きほく・ちょう（三重県）', type: 'town' },
+{ name: '御浜町', pref: 'みはま・ちょう（三重県）', type: 'town' },
+{ name: '紀宝町', pref: 'きほう・ちょう（三重県）', type: 'town' },
+
+
+  // 滋賀県
+  { name: '大津市', pref: 'おおつ（滋賀県）', type: 'city' },
+  { name: '彦根市', pref: 'ひこね（滋賀県）', type: 'city' },
+  { name: '長浜市', pref: 'ながはま（滋賀県）', type: 'city' },
+  { name: '近江八幡市', pref: 'おうみはちまん（滋賀県）', type: 'city' },
+  { name: '草津市', pref: 'くさつ（滋賀県）', type: 'city' },
+  { name: '守山市', pref: 'もりやま（滋賀県）', type: 'city' },
+  { name: '栗東市', pref: 'りっとう（滋賀県）', type: 'city' },
+  { name: '甲賀市', pref: 'こうか（滋賀県）', type: 'city' },
+  { name: '野洲市', pref: 'やす（滋賀県）', type: 'city' },
+  { name: '湖南市', pref: 'こなん（滋賀県）', type: 'city' },
+  { name: '高島市', pref: 'たかしま（滋賀県）', type: 'city' },
+  { name: '東近江市', pref: 'ひがしおうみ（滋賀県）', type: 'city' },
+  { name: '米原市', pref: 'まいばら（滋賀県）', type: 'city' },
+  { name: '日野町', pref: 'ひの・ちょう（滋賀県）', type: 'town' },
+{ name: '竜王町', pref: 'りゅうおう・ちょう（滋賀県）', type: 'town' },
+{ name: '愛荘町', pref: 'あいしょう・ちょう（滋賀県）', type: 'town' },
+{ name: '豊郷町', pref: 'とよさと・ちょう（滋賀県）', type: 'town' },
+{ name: '甲良町', pref: 'こうら・ちょう（滋賀県）', type: 'town' },
+{ name: '多賀町', pref: 'たが・ちょう（滋賀県）', type: 'town' },
+
+
+  // 京都府
+  { name: '京都市', pref: 'きょうと（京都府）', type: 'city' },
+  { name: '福知山市', pref: 'ふくちやま（京都府）', type: 'city' },
+  { name: '舞鶴市', pref: 'まいづる（京都府）', type: 'city' },
+  { name: '綾部市', pref: 'あやべ（京都府）', type: 'city' },
+  { name: '宇治市', pref: 'うじ（京都府）', type: 'city' },
+  { name: '宮津市', pref: 'みやづ（京都府）', type: 'city' },
+  { name: '亀岡市', pref: 'かめおか（京都府）', type: 'city' },
+  { name: '城陽市', pref: 'じょうよう（京都府）', type: 'city' },
+  { name: '向日市', pref: 'むこう（京都府）', type: 'city' },
+  { name: '長岡京市', pref: 'ながおかきょう（京都府）', type: 'city' },
+  { name: '八幡市', pref: 'やわた（京都府）', type: 'city' },
+  { name: '京田辺市', pref: 'きょうたなべ（京都府）', type: 'city' },
+  { name: '京丹後市', pref: 'きょうたんご（京都府）', type: 'city' },
+  { name: '南丹市', pref: 'なんたん（京都府）', type: 'city' },
+  { name: '木津川市', pref: 'きづがわ（京都府）', type: 'city' },
+  { name: '大山崎町', pref: 'おおやまざき・ちょう（京都府）', type: 'town' },
+{ name: '久御山町', pref: 'くみやま・ちょう（京都府）', type: 'town' },
+{ name: '井手町', pref: 'いで・ちょう（京都府）', type: 'town' },
+{ name: '宇治田原町', pref: 'うじたわら・ちょう（京都府）', type: 'town' },
+{ name: '笠置町', pref: 'かさぎ・ちょう（京都府）', type: 'town' },
+{ name: '和束町', pref: 'わづか・ちょう（京都府）', type: 'town' },
+{ name: '精華町', pref: 'せいか・ちょう（京都府）', type: 'town' },
+{ name: '京丹波町', pref: 'きょうたんば・ちょう（京都府）', type: 'town' },
+{ name: '伊根町', pref: 'いね・ちょう（京都府）', type: 'town' },
+{ name: '与謝野町', pref: 'よさの・ちょう（京都府）', type: 'town' },
+{ name: '南山城村', pref: 'みなみやましろ（京都府）', type: 'village' },
+
+
+  // 大阪府
+  { name: '大阪市', pref: 'おおさか（大阪府）', type: 'city' },
+  { name: '堺市', pref: 'さかい（大阪府）', type: 'city' },
+  { name: '岸和田市', pref: 'きしわだ（大阪府）', type: 'city' },
+  { name: '豊中市', pref: 'とよなか（大阪府）', type: 'city' },
+  { name: '池田市', pref: 'いけだ（大阪府）', type: 'city' },
+  { name: '吹田市', pref: 'すいた（大阪府）', type: 'city' },
+  { name: '泉大津市', pref: 'いずみおおつ（大阪府）', type: 'city' },
+  { name: '高槻市', pref: 'たかつき（大阪府）', type: 'city' },
+  { name: '貝塚市', pref: 'かいづか（大阪府）', type: 'city' },
+  { name: '守口市', pref: 'もりぐち（大阪府）', type: 'city' },
+  { name: '枚方市', pref: 'ひらかた（大阪府）', type: 'city' },
+  { name: '茨木市', pref: 'いばらき（大阪府）', type: 'city' },
+  { name: '八尾市', pref: 'やお（大阪府）', type: 'city' },
+  { name: '泉佐野市', pref: 'いずみさの（大阪府）', type: 'city' },
+  { name: '富田林市', pref: 'とんだばやし（大阪府）', type: 'city' },
+  { name: '寝屋川市', pref: 'ねやがわ（大阪府）', type: 'city' },
+  { name: '河内長野市', pref: 'かわちながの（大阪府）', type: 'city' },
+  { name: '松原市', pref: 'まつばら（大阪府）', type: 'city' },
+  { name: '大東市', pref: 'だいとう（大阪府）', type: 'city' },
+  { name: '和泉市', pref: 'いずみ（大阪府）', type: 'city' },
+  { name: '箕面市', pref: 'みのお（大阪府）', type: 'city' },
+  { name: '柏原市', pref: 'かしわら（大阪府）', type: 'city' },
+  { name: '羽曳野市', pref: 'はびきの（大阪府）', type: 'city' },
+  { name: '門真市', pref: 'かどま（大阪府）', type: 'city' },
+  { name: '摂津市', pref: 'せっつ（大阪府）', type: 'city' },
+  { name: '高石市', pref: 'たかいし（大阪府）', type: 'city' },
+  { name: '藤井寺市', pref: 'ふじいでら（大阪府）', type: 'city' },
+  { name: '東大阪市', pref: 'ひがしおおさか（大阪府）', type: 'city' },
+  { name: '泉南市', pref: 'せんなん（大阪府）', type: 'city' },
+  { name: '四條畷市', pref: 'しじょうなわて（大阪府）', type: 'city' },
+  { name: '交野市', pref: 'かたの（大阪府）', type: 'city' },
+  { name: '大阪狭山市', pref: 'おおさかさやま（大阪府）', type: 'city' },
+  { name: '阪南市', pref: 'はんなん（大阪府）', type: 'city' },
+  { name: '島本町', pref: 'しまもと・ちょう（大阪府）', type: 'town' },
+{ name: '豊能町', pref: 'とよの・ちょう（大阪府）', type: 'town' },
+{ name: '能勢町', pref: 'のせ・ちょう（大阪府）', type: 'town' },
+{ name: '忠岡町', pref: 'ただおか・ちょう（大阪府）', type: 'town' },
+{ name: '熊取町', pref: 'くまとり・ちょう（大阪府）', type: 'town' },
+{ name: '田尻町', pref: 'たじり・ちょう（大阪府）', type: 'town' },
+{ name: '岬町', pref: 'みさき・ちょう（大阪府）', type: 'town' },
+{ name: '太子町', pref: 'たいし・ちょう（大阪府）', type: 'town' },
+{ name: '河南町', pref: 'かなん・ちょう（大阪府）', type: 'town' },
+{ name: '千早赤阪村', pref: 'ちはやあかさか（大阪府）', type: 'village' },
+
+
+  // 兵庫県
+  { name: '神戸市', pref: 'こうべ（兵庫県）', type: 'city' },
+  { name: '姫路市', pref: 'ひめじ（兵庫県）', type: 'city' },
+  { name: '尼崎市', pref: 'あまがさき（兵庫県）', type: 'city' },
+  { name: '明石市', pref: 'あかし（兵庫県）', type: 'city' },
+  { name: '西宮市', pref: 'にしのみや（兵庫県）', type: 'city' },
+  { name: '洲本市', pref: 'すもと（兵庫県）', type: 'city' },
+  { name: '芦屋市', pref: 'あしや（兵庫県）', type: 'city' },
+  { name: '伊丹市', pref: 'いたみ（兵庫県）', type: 'city' },
+  { name: '相生市', pref: 'あいおい（兵庫県）', type: 'city' },
+  { name: '豊岡市', pref: 'とよおか（兵庫県）', type: 'city' },
+  { name: '加古川市', pref: 'かこがわ（兵庫県）', type: 'city' },
+  { name: '赤穂市', pref: 'あこう（兵庫県）', type: 'city' },
+  { name: '西脇市', pref: 'にしわき（兵庫県）', type: 'city' },
+  { name: '宝塚市', pref: 'たからづか（兵庫県）', type: 'city' },
+  { name: '三木市', pref: 'みき（兵庫県）', type: 'city' },
+  { name: '高砂市', pref: 'たかさご（兵庫県）', type: 'city' },
+  { name: '川西市', pref: 'かわにし（兵庫県）', type: 'city' },
+  { name: '小野市', pref: 'おの（兵庫県）', type: 'city' },
+  { name: '三田市', pref: 'さんだ（兵庫県）', type: 'city' },
+  { name: '加西市', pref: 'かさい（兵庫県）', type: 'city' },
+  { name: '丹波篠山市', pref: 'たんばささやま（兵庫県）', type: 'city' },
+  { name: '養父市', pref: 'やぶ（兵庫県）', type: 'city' },
+  { name: '丹波市', pref: 'たんば（兵庫県）', type: 'city' },
+  { name: '南あわじ市', pref: 'みなみあわじ（兵庫県）', type: 'city' },
+  { name: '朝来市', pref: 'あさご（兵庫県）', type: 'city' },
+  { name: '淡路市', pref: 'あわじ（兵庫県）', type: 'city' },
+  { name: '宍粟市', pref: 'しそう（兵庫県）', type: 'city' },
+  { name: '加東市', pref: 'かとう（兵庫県）', type: 'city' },
+  { name: 'たつの市', pref: 'たつの（兵庫県）', type: 'city' },
+  { name: '猪名川町', pref: 'いながわ・ちょう（兵庫県）', type: 'town' },
+{ name: '多可町', pref: 'たか・ちょう（兵庫県）', type: 'town' },
+{ name: '稲美町', pref: 'いなみ・ちょう（兵庫県）', type: 'town' },
+{ name: '播磨町', pref: 'はりま・ちょう（兵庫県）', type: 'town' },
+{ name: '市川町', pref: 'いちかわ・ちょう（兵庫県）', type: 'town' },
+{ name: '福崎町', pref: 'ふくさき・ちょう（兵庫県）', type: 'town' },
+{ name: '神河町', pref: 'かみかわ・ちょう（兵庫県）', type: 'town' },
+{ name: '太子町', pref: 'たいし・ちょう（兵庫県）', type: 'town' },
+{ name: '上郡町', pref: 'かみごおり・ちょう（兵庫県）', type: 'town' },
+{ name: '佐用町', pref: 'さよう・ちょう（兵庫県）', type: 'town' },
+{ name: '香美町', pref: 'かみ・ちょう（兵庫県）', type: 'town' },
+{ name: '新温泉町', pref: 'しんおんせん・ちょう（兵庫県）', type: 'town' },
+
+
+  // 奈良県
+  { name: '奈良市', pref: 'なら（奈良県）', type: 'city' },
+  { name: '大和高田市', pref: 'やまとたかだ（奈良県）', type: 'city' },
+  { name: '大和郡山市', pref: 'やまとこおりやま（奈良県）', type: 'city' },
+  { name: '天理市', pref: 'てんり（奈良県）', type: 'city' },
+  { name: '橿原市', pref: 'かしはら（奈良県）', type: 'city' },
+  { name: '桜井市', pref: 'さくらい（奈良県）', type: 'city' },
+  { name: '五條市', pref: 'ごじょう（奈良県）', type: 'city' },
+  { name: '御所市', pref: 'ごせ（奈良県）', type: 'city' },
+  { name: '生駒市', pref: 'いこま（奈良県）', type: 'city' },
+  { name: '香芝市', pref: 'かしば（奈良県）', type: 'city' },
+  { name: '葛城市', pref: 'かつらぎ（奈良県）', type: 'city' },
+  { name: '宇陀市', pref: 'うだ（奈良県）', type: 'city' },
+  { name: '平群町', pref: 'へぐり・ちょう（奈良県）', type: 'town' },
+{ name: '三郷町', pref: 'さんごう・ちょう（奈良県）', type: 'town' },
+{ name: '斑鳩町', pref: 'いかるが・ちょう（奈良県）', type: 'town' },
+{ name: '安堵町', pref: 'あんど・ちょう（奈良県）', type: 'town' },
+{ name: '川西町', pref: 'かわにし・ちょう（奈良県）', type: 'town' },
+{ name: '三宅町', pref: 'みやけ・ちょう（奈良県）', type: 'town' },
+{ name: '田原本町', pref: 'たわらもと・ちょう（奈良県）', type: 'town' },
+{ name: '高取町', pref: 'たかとり・ちょう（奈良県）', type: 'town' },
+{ name: '上牧町', pref: 'かんまき・ちょう（奈良県）', type: 'town' },
+{ name: '王寺町', pref: 'おうじ・ちょう（奈良県）', type: 'town' },
+{ name: '広陵町', pref: 'こうりょう・ちょう（奈良県）', type: 'town' },
+{ name: '河合町', pref: 'かわい・ちょう（奈良県）', type: 'town' },
+{ name: '吉野町', pref: 'よしの・ちょう（奈良県）', type: 'town' },
+{ name: '大淀町', pref: 'おおよど・ちょう（奈良県）', type: 'town' },
+{ name: '下市町', pref: 'しもいち・ちょう（奈良県）', type: 'town' },
+{ name: '山添村', pref: 'やまぞえ（奈良県）', type: 'village' },
+{ name: '曽爾村', pref: 'そに（奈良県）', type: 'village' },
+{ name: '御杖村', pref: 'みつえ（奈良県）', type: 'village' },
+{ name: '明日香村', pref: 'あすか（奈良県）', type: 'village' },
+{ name: '黒滝村', pref: 'くろたき（奈良県）', type: 'village' },
+{ name: '天川村', pref: 'てんかわ（奈良県）', type: 'village' },
+{ name: '野迫川村', pref: 'のせがわ（奈良県）', type: 'village' },
+{ name: '十津川村', pref: 'とつかわ（奈良県）', type: 'village' },
+{ name: '下北山村', pref: 'しもきたやま（奈良県）', type: 'village' },
+{ name: '上北山村', pref: 'かみきたやま（奈良県）', type: 'village' },
+{ name: '川上村', pref: 'かわかみ（奈良県）', type: 'village' },
+{ name: '東吉野村', pref: 'ひがしよしの（奈良県）', type: 'village' },
+
+
+  // 和歌山県
+  { name: '和歌山市', pref: 'わかやま（和歌山県）', type: 'city' },
+  { name: '海南市', pref: 'かいなん（和歌山県）', type: 'city' },
+  { name: '橋本市', pref: 'はしもと（和歌山県）', type: 'city' },
+  { name: '有田市', pref: 'ありだ（和歌山県）', type: 'city' },
+  { name: '御坊市', pref: 'ごぼう（和歌山県）', type: 'city' },
+  { name: '田辺市', pref: 'たなべ（和歌山県）', type: 'city' },
+  { name: '新宮市', pref: 'しんぐう（和歌山県）', type: 'city' },
+  { name: '紀の川市', pref: 'きのかわ（和歌山県）', type: 'city' },
+  { name: '岩出市', pref: 'いわで（和歌山県）', type: 'city' },
+  { name: '紀美野町', pref: 'きみの・ちょう（和歌山県）', type: 'town' },
+{ name: 'かつらぎ町', pref: 'かつらぎ・ちょう（和歌山県）', type: 'town' },
+{ name: '九度山町', pref: 'くどやま・ちょう（和歌山県）', type: 'town' },
+{ name: '高野町', pref: 'こうや・ちょう（和歌山県）', type: 'town' },
+{ name: '湯浅町', pref: 'ゆあさ・ちょう（和歌山県）', type: 'town' },
+{ name: '広川町', pref: 'ひろがわ・ちょう（和歌山県）', type: 'town' },
+{ name: '有田川町', pref: 'ありだがわ・ちょう（和歌山県）', type: 'town' },
+{ name: '美浜町', pref: 'みはま・ちょう（和歌山県）', type: 'town' },
+{ name: '日高町', pref: 'ひだか・ちょう（和歌山県）', type: 'town' },
+{ name: '由良町', pref: 'ゆら・ちょう（和歌山県）', type: 'town' },
+{ name: '印南町', pref: 'いなみ・ちょう（和歌山県）', type: 'town' },
+{ name: 'みなべ町', pref: 'みなべ・ちょう（和歌山県）', type: 'town' },
+{ name: '日高川町', pref: 'ひだかがわ・ちょう（和歌山県）', type: 'town' },
+{ name: '白浜町', pref: 'しらはま・ちょう（和歌山県）', type: 'town' },
+{ name: '上富田町', pref: 'かみとんだ・ちょう（和歌山県）', type: 'town' },
+{ name: 'すさみ町', pref: 'すさみ・ちょう（和歌山県）', type: 'town' },
+{ name: '那智勝浦町', pref: 'なちかつうら・ちょう（和歌山県）', type: 'town' },
+{ name: '太地町', pref: 'たいじ・ちょう（和歌山県）', type: 'town' },
+{ name: '古座川町', pref: 'こざがわ・ちょう（和歌山県）', type: 'town' },
+{ name: '串本町', pref: 'くしもと・ちょう（和歌山県）', type: 'town' },
+{ name: '北山村', pref: 'きたやま（和歌山県）', type: 'village' },
+
+
+  // 鳥取県
+  { name: '鳥取市', pref: 'とっとり（鳥取県）', type: 'city' },
+  { name: '米子市', pref: 'よなご（鳥取県）', type: 'city' },
+  { name: '倉吉市', pref: 'くらよし（鳥取県）', type: 'city' },
+  { name: '境港市', pref: 'さかいみなと（鳥取県）', type: 'city' },
+{ name: '岩美町', pref: 'いわみ・ちょう（鳥取県）', type: 'town' },
+{ name: '若桜町', pref: 'わかさ・ちょう（鳥取県）', type: 'town' },
+{ name: '智頭町', pref: 'ちづ・ちょう（鳥取県）', type: 'town' },
+{ name: '八頭町', pref: 'やず・ちょう（鳥取県）', type: 'town' },
+{ name: '三朝町', pref: 'みささ・ちょう（鳥取県）', type: 'town' },
+{ name: '湯梨浜町', pref: 'ゆりはま・ちょう（鳥取県）', type: 'town' },
+{ name: '琴浦町', pref: 'ことうら・ちょう（鳥取県）', type: 'town' },
+{ name: '北栄町', pref: 'ほくえい・ちょう（鳥取県）', type: 'town' },
+{ name: '大山町', pref: 'だいせん・ちょう（鳥取県）', type: 'town' },
+{ name: '南部町', pref: 'なんぶ・ちょう（鳥取県）', type: 'town' },
+{ name: '伯耆町', pref: 'ほうき・ちょう（鳥取県）', type: 'town' },
+{ name: '日南町', pref: 'にちなん・ちょう（鳥取県）', type: 'town' },
+{ name: '日野町', pref: 'ひの・ちょう（鳥取県）', type: 'town' },
+{ name: '江府町', pref: 'こうふ・ちょう（鳥取県）', type: 'town' },
+{ name: '日吉津村', pref: 'ひえづ・そん（鳥取県）', type: 'village' },
+
+  // 島根県
+  { name: '松江市', pref: 'まつえ（島根県）', type: 'city' },
+  { name: '浜田市', pref: 'はまだ（島根県）', type: 'city' },
+  { name: '出雲市', pref: 'いずも（島根県）', type: 'city' },
+  { name: '益田市', pref: 'ますだ（島根県）', type: 'city' },
+  { name: '大田市', pref: 'おおだ（島根県）', type: 'city' },
+  { name: '安来市', pref: 'やすぎ（島根県）', type: 'city' },
+  { name: '江津市', pref: 'ごうつ（島根県）', type: 'city' },
+  { name: '雲南市', pref: 'うんなん（島根県）', type: 'city' },
+{ name: '奥出雲町', pref: 'おくいずも・ちょう（島根県）', type: 'town' },
+{ name: '飯南町', pref: 'いいなん・ちょう（島根県）', type: 'town' },
+{ name: '川本町', pref: 'かわもと・まち（島根県）', type: 'town' },
+{ name: '美郷町', pref: 'みさと・ちょう（島根県）', type: 'town' },
+{ name: '邑南町', pref: 'おおなん・ちょう（島根県）', type: 'town' },
+{ name: '津和野町', pref: 'つわの・ちょう（島根県）', type: 'town' },
+{ name: '吉賀町', pref: 'よしか・ちょう（島根県）', type: 'town' },
+{ name: '海士町', pref: 'あま・ちょう（島根県）', type: 'town' },
+{ name: '西ノ島町', pref: 'にしのしま・ちょう（島根県）', type: 'town' },
+{ name: '隠岐の島町', pref: 'おきのしま・ちょう（島根県）', type: 'town' },
+{ name: '知夫村', pref: 'ちぶ（島根県）', type: 'village' },
+
+  // 岡山県
+  { name: '岡山市', pref: 'おかやま（岡山県）', type: 'city' },
+  { name: '倉敷市', pref: 'くらしき（岡山県）', type: 'city' },
+  { name: '津山市', pref: 'つやま（岡山県）', type: 'city' },
+  { name: '玉野市', pref: 'たまの（岡山県）', type: 'city' },
+  { name: '笠岡市', pref: 'かさおか（岡山県）', type: 'city' },
+  { name: '井原市', pref: 'いばら（岡山県）', type: 'city' },
+  { name: '総社市', pref: 'そうじゃ（岡山県）', type: 'city' },
+  { name: '高梁市', pref: 'たかはし（岡山県）', type: 'city' },
+  { name: '新見市', pref: 'にいみ（岡山県）', type: 'city' },
+  { name: '備前市', pref: 'びぜん（岡山県）', type: 'city' },
+  { name: '瀬戸内市', pref: 'せとうち（岡山県）', type: 'city' },
+  { name: '赤磐市', pref: 'あかいわ（岡山県）', type: 'city' },
+  { name: '真庭市', pref: 'まにわ（岡山県）', type: 'city' },
+  { name: '美作市', pref: 'みまさか（岡山県）', type: 'city' },
+  { name: '浅口市', pref: 'あさくち（岡山県）', type: 'city' },
+{ name: '和気町', pref: 'わけ・ちょう（岡山県）', type: 'town' },
+{ name: '早島町', pref: 'はやしま・ちょう（岡山県）', type: 'town' },
+{ name: '里庄町', pref: 'さとしょう・ちょう（岡山県）', type: 'town' },
+{ name: '矢掛町', pref: 'やかげ・ちょう（岡山県）', type: 'town' },
+{ name: '鏡野町', pref: 'かがみの・ちょう（岡山県）', type: 'town' },
+{ name: '勝央町', pref: 'しょうおう・ちょう（岡山県）', type: 'town' },
+{ name: '奈義町', pref: 'なぎ・ちょう（岡山県）', type: 'town' },
+{ name: '久米南町', pref: 'くめなん・ちょう（岡山県）', type: 'town' },
+{ name: '美咲町', pref: 'みさき・ちょう（岡山県）', type: 'town' },
+{ name: '吉備中央町', pref: 'きびちゅうおう・ちょう（岡山県）', type: 'town' },
+{ name: '新庄村', pref: 'しんじょう・そん（岡山県）', type: 'village' },
+{ name: '西粟倉村', pref: 'にしあわくら・そん（岡山県）', type: 'village' },
+
+  // 広島県
+  { name: '広島市', pref: 'ひろしま（広島県）', type: 'city' },
+  { name: '呉市', pref: 'くれ（広島県）', type: 'city' },
+  { name: '竹原市', pref: 'たけはら（広島県）', type: 'city' },
+  { name: '三原市', pref: 'みはら（広島県）', type: 'city' },
+  { name: '尾道市', pref: 'おのみち（広島県）', type: 'city' },
+  { name: '福山市', pref: 'ふくやま（広島県）', type: 'city' },
+  { name: '府中市', pref: 'ふちゅう（広島県）', type: 'city' },
+  { name: '三次市', pref: 'みよし（広島県）', type: 'city' },
+  { name: '庄原市', pref: 'しょうばら（広島県）', type: 'city' },
+  { name: '大竹市', pref: 'おおたけ（広島県）', type: 'city' },
+  { name: '東広島市', pref: 'ひがしひろしま（広島県）', type: 'city' },
+  { name: '廿日市市', pref: 'はつかいち（広島県）', type: 'city' },
+  { name: '安芸高田市', pref: 'あきたかた（広島県）', type: 'city' },
+  { name: '江田島市', pref: 'えたじま（広島県）', type: 'city' },
+{ name: '府中町', pref: 'ふちゅう・ちょう（広島県）', type: 'town' },
+{ name: '海田町', pref: 'かいた・ちょう（広島県）', type: 'town' },
+{ name: '熊野町', pref: 'くまの・ちょう（広島県）', type: 'town' },
+{ name: '坂町', pref: 'さか・ちょう（広島県）', type: 'town' },
+{ name: '安芸太田町', pref: 'あきおおた・ちょう（広島県）', type: 'town' },
+{ name: '北広島町', pref: 'きたひろしま・ちょう（広島県）', type: 'town' },
+{ name: '大崎上島町', pref: 'おおさきかみじま・ちょう（広島県）', type: 'town' },
+{ name: '世羅町', pref: 'せら・ちょう（広島県）', type: 'town' },
+{ name: '神石高原町', pref: 'じんせきこうげん・ちょう（広島県）', type: 'town' },
+
+  // 山口県
+  { name: '下関市', pref: 'しものせき（山口県）', type: 'city' },
+  { name: '宇部市', pref: 'うべ（山口県）', type: 'city' },
+  { name: '山口市', pref: 'やまぐち（山口県）', type: 'city' },
+  { name: '萩市', pref: 'はぎ（山口県）', type: 'city' },
+  { name: '防府市', pref: 'ほうふ（山口県）', type: 'city' },
+  { name: '下松市', pref: 'くだまつ（山口県）', type: 'city' },
+  { name: '岩国市', pref: 'いわくに（山口県）', type: 'city' },
+  { name: '光市', pref: 'ひかり（山口県）', type: 'city' },
+  { name: '長門市', pref: 'ながと（山口県）', type: 'city' },
+  { name: '柳井市', pref: 'やない（山口県）', type: 'city' },
+  { name: '美祢市', pref: 'みね（山口県）', type: 'city' },
+  { name: '周南市', pref: 'しゅうなん（山口県）', type: 'city' },
+  { name: '山陽小野田市', pref: 'さんようおのだ（山口県）', type: 'city' },
+{ name: '周防大島町', pref: 'すおうおおしま・ちょう（山口県）', type: 'town' },
+{ name: '和木町', pref: 'わき・ちょう（山口県）', type: 'town' },
+{ name: '上関町', pref: 'かみのせき・ちょう（山口県）', type: 'town' },
+{ name: '田布施町', pref: 'たぶせ・ちょう（山口県）', type: 'town' },
+{ name: '平生町', pref: 'ひらお・ちょう（山口県）', type: 'town' },
+{ name: '阿武町', pref: 'あぶ・ちょう（山口県）', type: 'town' },
+
+  // 徳島県
+  { name: '徳島市', pref: 'とくしま（徳島県）', type: 'city' },
+  { name: '鳴門市', pref: 'なると（徳島県）', type: 'city' },
+  { name: '小松島市', pref: 'こまつしま（徳島県）', type: 'city' },
+  { name: '阿南市', pref: 'あなん（徳島県）', type: 'city' },
+  { name: '吉野川市', pref: 'よしのがわ（徳島県）', type: 'city' },
+  { name: '阿波市', pref: 'あわ（徳島県）', type: 'city' },
+  { name: '美馬市', pref: 'みま（徳島県）', type: 'city' },
+  { name: '三好市', pref: 'みよし（徳島県）', type: 'city' },
+{ name: '勝浦町', pref: 'かつうら・ちょう（徳島県）', type: 'town' },
+{ name: '上勝町', pref: 'かみかつ・ちょう（徳島県）', type: 'town' },
+{ name: '石井町', pref: 'いしい・ちょう（徳島県）', type: 'town' },
+{ name: '神山町', pref: 'かみやま・ちょう（徳島県）', type: 'town' },
+{ name: '那賀町', pref: 'なか・ちょう（徳島県）', type: 'town' },
+{ name: '牟岐町', pref: 'むぎ・ちょう（徳島県）', type: 'town' },
+{ name: '美波町', pref: 'みなみ・ちょう（徳島県）', type: 'town' },
+{ name: '海陽町', pref: 'かいよう・ちょう（徳島県）', type: 'town' },
+{ name: '松茂町', pref: 'まつしげ・ちょう（徳島県）', type: 'town' },
+{ name: '北島町', pref: 'きたじま・ちょう（徳島県）', type: 'town' },
+{ name: '藍住町', pref: 'あいずみ・ちょう（徳島県）', type: 'town' },
+{ name: '板野町', pref: 'いたの・ちょう（徳島県）', type: 'town' },
+{ name: '上板町', pref: 'かみいた・ちょう（徳島県）', type: 'town' },
+{ name: 'つるぎ町', pref: 'つるぎ・ちょう（徳島県）', type: 'town' },
+{ name: '東みよし町', pref: 'ひがしみよし・ちょう（徳島県）', type: 'town' },
+{ name: '佐那河内村', pref: 'さなごうち・そん（徳島県）', type: 'village' },
+
+  // 香川県
+  { name: '高松市', pref: 'たかまつ（香川県）', type: 'city' },
+  { name: '丸亀市', pref: 'まるがめ（香川県）', type: 'city' },
+  { name: '坂出市', pref: 'さかいで（香川県）', type: 'city' },
+  { name: '善通寺市', pref: 'ぜんつうじ（香川県）', type: 'city' },
+  { name: '観音寺市', pref: 'かんおんじ（香川県）', type: 'city' },
+  { name: 'さぬき市', pref: 'さぬき（香川県）', type: 'city' },
+  { name: '東かがわ市', pref: 'ひがしかがわ（香川県）', type: 'city' },
+  { name: '三豊市', pref: 'みとよ（香川県）', type: 'city' },
+{ name: '土庄町', pref: 'とのしょう・ちょう（香川県）', type: 'town' },
+{ name: '小豆島町', pref: 'しょうどしま・ちょう（香川県）', type: 'town' },
+{ name: '三木町', pref: 'みき・ちょう（香川県）', type: 'town' },
+{ name: '直島町', pref: 'なおしま・ちょう（香川県）', type: 'town' },
+{ name: '宇多津町', pref: 'うたづ・ちょう（香川県）', type: 'town' },
+{ name: '綾川町', pref: 'あやがわ・ちょう（香川県）', type: 'town' },
+{ name: '琴平町', pref: 'ことひら・ちょう（香川県）', type: 'town' },
+{ name: '多度津町', pref: 'たどつ・ちょう（香川県）', type: 'town' },
+{ name: 'まんのう町', pref: 'まんのう・ちょう（香川県）', type: 'town' },
+
+  // 愛媛県
+  { name: '松山市', pref: 'まつやま（愛媛県）', type: 'city' },
+  { name: '今治市', pref: 'いまばり（愛媛県）', type: 'city' },
+  { name: '宇和島市', pref: 'うわじま（愛媛県）', type: 'city' },
+  { name: '八幡浜市', pref: 'やわたはま（愛媛県）', type: 'city' },
+  { name: '新居浜市', pref: 'にいはま（愛媛県）', type: 'city' },
+  { name: '西条市', pref: 'さいじょう（愛媛県）', type: 'city' },
+  { name: '大洲市', pref: 'おおず（愛媛県）', type: 'city' },
+  { name: '伊予市', pref: 'いよ（愛媛県）', type: 'city' },
+  { name: '四国中央市', pref: 'しこくちゅうおう（愛媛県）', type: 'city' },
+  { name: '西予市', pref: 'せいよ（愛媛県）', type: 'city' },
+  { name: '東温市', pref: 'とうおん（愛媛県）', type: 'city' },
+{ name: '上島町', pref: 'かみじま・ちょう（愛媛県）', type: 'town' },
+{ name: '久万高原町', pref: 'くまこうげん・ちょう（愛媛県）', type: 'town' },
+{ name: '松前町', pref: 'まさき・ちょう（愛媛県）', type: 'town' },
+{ name: '砥部町', pref: 'とべ・ちょう（愛媛県）', type: 'town' },
+{ name: '内子町', pref: 'うちこ・ちょう（愛媛県）', type: 'town' },
+{ name: '伊方町', pref: 'いかた・ちょう（愛媛県）', type: 'town' },
+{ name: '松野町', pref: 'まつの・ちょう（愛媛県）', type: 'town' },
+{ name: '鬼北町', pref: 'きほく・ちょう（愛媛県）', type: 'town' },
+{ name: '愛南町', pref: 'あいなん・ちょう（愛媛県）', type: 'town' },
+
+  // 高知県
+  { name: '高知市', pref: 'こうち（高知県）', type: 'city' },
+  { name: '室戸市', pref: 'むろと（高知県）', type: 'city' },
+  { name: '安芸市', pref: 'あき（高知県）', type: 'city' },
+  { name: '南国市', pref: 'なんこく（高知県）', type: 'city' },
+  { name: '土佐市', pref: 'とさ（高知県）', type: 'city' },
+  { name: '須崎市', pref: 'すさき（高知県）', type: 'city' },
+  { name: '宿毛市', pref: 'すくも（高知県）', type: 'city' },
+  { name: '土佐清水市', pref: 'とさしみず（高知県）', type: 'city' },
+  { name: '四万十市', pref: 'しまんと（高知県）', type: 'city' },
+  { name: '香南市', pref: 'こうなん（高知県）', type: 'city' },
+  { name: '香美市', pref: 'かみ（高知県）', type: 'city' },
+{ name: '東洋町', pref: 'とうよう・ちょう（高知県）', type: 'town' },
+{ name: '奈半利町', pref: 'なはり・ちょう（高知県）', type: 'town' },
+{ name: '田野町', pref: 'たの・ちょう（高知県）', type: 'town' },
+{ name: '安田町', pref: 'やすだ・ちょう（高知県）', type: 'town' },
+{ name: '本山町', pref: 'もとやま・ちょう（高知県）', type: 'town' },
+{ name: '大豊町', pref: 'おおとよ・ちょう（高知県）', type: 'town' },
+{ name: '土佐町', pref: 'とさ・ちょう（高知県）', type: 'town' },
+{ name: 'いの町', pref: 'いの・ちょう（高知県）', type: 'town' },
+{ name: '仁淀川町', pref: 'によどがわ・ちょう（高知県）', type: 'town' },
+{ name: '中土佐町', pref: 'なかとさ・ちょう（高知県）', type: 'town' },
+{ name: '佐川町', pref: 'さかわ・ちょう（高知県）', type: 'town' },
+{ name: '越知町', pref: 'おち・ちょう（高知県）', type: 'town' },
+{ name: '梼原町', pref: 'ゆすはら・ちょう（高知県）', type: 'town' },
+{ name: '津野町', pref: 'つの・ちょう（高知県）', type: 'town' },
+{ name: '四万十町', pref: 'しまんと・ちょう（高知県）', type: 'town' },
+{ name: '大月町', pref: 'おおつき・ちょう（高知県）', type: 'town' },
+{ name: '黒潮町', pref: 'くろしお・ちょう（高知県）', type: 'town' },
+{ name: '北川村', pref: 'きたがわ（高知県）', type: 'village' },
+{ name: '馬路村', pref: 'うまじ（高知県）', type: 'village' },
+{ name: '芸西村', pref: 'げいせい（高知県）', type: 'village' },
+{ name: '大川村', pref: 'おおかわ（高知県）', type: 'village' },
+{ name: '日高村', pref: 'ひだか（高知県）', type: 'village' },
+{ name: '三原村', pref: 'みはら（高知県）', type: 'village' },
+
+  // 福岡県
+  { name: '北九州市', pref: 'きたきゅうしゅう（福岡県）', type: 'city' },
+  { name: '福岡市', pref: 'ふくおか（福岡県）', type: 'city' },
+  { name: '大牟田市', pref: 'おおむた（福岡県）', type: 'city' },
+  { name: '久留米市', pref: 'くるめ（福岡県）', type: 'city' },
+  { name: '直方市', pref: 'のおがた（福岡県）', type: 'city' },
+  { name: '飯塚市', pref: 'いいづか（福岡県）', type: 'city' },
+  { name: '田川市', pref: 'たがわ（福岡県）', type: 'city' },
+  { name: '柳川市', pref: 'やながわ（福岡県）', type: 'city' },
+  { name: '八女市', pref: 'やめ（福岡県）', type: 'city' },
+  { name: '筑後市', pref: 'ちくご（福岡県）', type: 'city' },
+  { name: '大川市', pref: 'おおかわ（福岡県）', type: 'city' },
+  { name: '行橋市', pref: 'ゆくはし（福岡県）', type: 'city' },
+  { name: '豊前市', pref: 'ぶぜん（福岡県）', type: 'city' },
+  { name: '中間市', pref: 'なかま（福岡県）', type: 'city' },
+  { name: '小郡市', pref: 'おごおり（福岡県）', type: 'city' },
+  { name: '筑紫野市', pref: 'ちくしの（福岡県）', type: 'city' },
+  { name: '春日市', pref: 'かすが（福岡県）', type: 'city' },
+  { name: '大野城市', pref: 'おおのじょう（福岡県）', type: 'city' },
+  { name: '宗像市', pref: 'むなかた（福岡県）', type: 'city' },
+  { name: '太宰府市', pref: 'だざいふ（福岡県）', type: 'city' },
+  { name: '古賀市', pref: 'こが（福岡県）', type: 'city' },
+  { name: '福津市', pref: 'ふくつ（福岡県）', type: 'city' },
+  { name: 'うきは市', pref: 'うきは（福岡県）', type: 'city' },
+  { name: '宮若市', pref: 'みやわか（福岡県）', type: 'city' },
+  { name: '嘉麻市', pref: 'かま（福岡県）', type: 'city' },
+  { name: '朝倉市', pref: 'あさくら（福岡県）', type: 'city' },
+  { name: 'みやま市', pref: 'みやま（福岡県）', type: 'city' },
+  { name: '糸島市', pref: 'いとしま（福岡県）', type: 'city' },
+  { name: '那珂川市', pref: 'なかがわ（福岡県）', type: 'city' },
+{ name: '宇美町', pref: 'うみ・まち（福岡県）', type: 'town' },
+{ name: '篠栗町', pref: 'ささぐり・まち（福岡県）', type: 'town' },
+{ name: '志免町', pref: 'しめ・まち（福岡県）', type: 'town' },
+{ name: '須恵町', pref: 'すえ・まち（福岡県）', type: 'town' },
+{ name: '新宮町', pref: 'しんぐう・まち（福岡県）', type: 'town' },
+{ name: '久山町', pref: 'ひさやま・まち（福岡県）', type: 'town' },
+{ name: '粕屋町', pref: 'かすや・まち（福岡県）', type: 'town' },
+{ name: '芦屋町', pref: 'あしや・まち（福岡県）', type: 'town' },
+{ name: '水巻町', pref: 'みずまき・まち（福岡県）', type: 'town' },
+{ name: '岡垣町', pref: 'おかがき・まち（福岡県）', type: 'town' },
+{ name: '遠賀町', pref: 'おんが・ちょう（福岡県）', type: 'town' },
+{ name: '小竹町', pref: 'こたけ・まち（福岡県）', type: 'town' },
+{ name: '鞍手町', pref: 'くらて・まち（福岡県）', type: 'town' },
+{ name: '桂川町', pref: 'けいせん・まち（福岡県）', type: 'town' },
+{ name: '筑前町', pref: 'ちくぜん・まち（福岡県）', type: 'town' },
+{ name: '大刀洗町', pref: 'たちあらい・まち（福岡県）', type: 'town' },
+{ name: '大木町', pref: 'おおき・まち（福岡県）', type: 'town' },
+{ name: '広川町', pref: 'ひろかわ・まち（福岡県）', type: 'town' },
+{ name: '香春町', pref: 'かわら・まち（福岡県）', type: 'town' },
+{ name: '添田町', pref: 'そえだ・まち（福岡県）', type: 'town' },
+{ name: '糸田町', pref: 'いとだ・まち（福岡県）', type: 'town' },
+{ name: '川崎町', pref: 'かわさき・まち（福岡県）', type: 'town' },
+{ name: '大任町', pref: 'おおとう・まち（福岡県）', type: 'town' },
+{ name: '福智町', pref: 'ふくち・まち（福岡県）', type: 'town' },
+{ name: '苅田町', pref: 'かんだ・まち（福岡県）', type: 'town' },
+{ name: 'みやこ町', pref: 'みやこ・まち（福岡県）', type: 'town' },
+{ name: '吉富町', pref: 'よしとみ・まち（福岡県）', type: 'town' },
+{ name: '上毛町', pref: 'こうげ・まち（福岡県）', type: 'town' },
+{ name: '築上町', pref: 'ちくじょう・まち（福岡県）', type: 'town' },
+{ name: '東峰村', pref: 'とうほう（福岡県）', type: 'village' },
+{ name: '赤村', pref: 'あか（福岡県）', type: 'village' },
+
+  // 佐賀県
+  { name: '佐賀市', pref: 'さが（佐賀県）', type: 'city' },
+  { name: '唐津市', pref: 'からつ（佐賀県）', type: 'city' },
+  { name: '鳥栖市', pref: 'とす（佐賀県）', type: 'city' },
+  { name: '多久市', pref: 'たく（佐賀県）', type: 'city' },
+  { name: '伊万里市', pref: 'いまり（佐賀県）', type: 'city' },
+  { name: '武雄市', pref: 'たけお（佐賀県）', type: 'city' },
+  { name: '鹿島市', pref: 'かしま（佐賀県）', type: 'city' },
+  { name: '小城市', pref: 'おぎ（佐賀県）', type: 'city' },
+  { name: '嬉野市', pref: 'うれしの（佐賀県）', type: 'city' },
+  { name: '神埼市', pref: 'かんざき（佐賀県）', type: 'city' },
+{ name: '吉野ヶ里町', pref: 'よしのがり・ちょう（佐賀県）', type: 'town' },
+{ name: '基山町', pref: 'きやま・ちょう（佐賀県）', type: 'town' },
+{ name: '上峰町', pref: 'かみみね・ちょう（佐賀県）', type: 'town' },
+{ name: 'みやき町', pref: 'みやき・ちょう（佐賀県）', type: 'town' },
+{ name: '玄海町', pref: 'げんかい・ちょう（佐賀県）', type: 'town' },
+{ name: '有田町', pref: 'ありた・ちょう（佐賀県）', type: 'town' },
+{ name: '大町町', pref: 'おおまち・ちょう（佐賀県）', type: 'town' },
+{ name: '江北町', pref: 'こうほく・まち（佐賀県）', type: 'town' },
+{ name: '白石町', pref: 'しろいし・ちょう（佐賀県）', type: 'town' },
+{ name: '太良町', pref: 'たら・ちょう（佐賀県）', type: 'town' },
+
+  // 長崎県
+  { name: '長崎市', pref: 'ながさき（長崎県）', type: 'city' },
+  { name: '佐世保市', pref: 'させぼ（長崎県）', type: 'city' },
+  { name: '島原市', pref: 'しまばら（長崎県）', type: 'city' },
+  { name: '諫早市', pref: 'いさはや（長崎県）', type: 'city' },
+  { name: '大村市', pref: 'おおむら（長崎県）', type: 'city' },
+  { name: '平戸市', pref: 'ひらど（長崎県）', type: 'city' },
+  { name: '松浦市', pref: 'まつうら（長崎県）', type: 'city' },
+  { name: '対馬市', pref: 'つしま（長崎県）', type: 'city' },
+  { name: '壱岐市', pref: 'いき（長崎県）', type: 'city' },
+  { name: '五島市', pref: 'ごとう（長崎県）', type: 'city' },
+  { name: '西海市', pref: 'さいかい（長崎県）', type: 'city' },
+  { name: '雲仙市', pref: 'うんぜん（長崎県）', type: 'city' },
+  { name: '南島原市', pref: 'みなみしまばら（長崎県）', type: 'city' },
+{ name: '長与町', pref: 'ながよ・ちょう（長崎県）', type: 'town' },
+{ name: '時津町', pref: 'とぎつ・ちょう（長崎県）', type: 'town' },
+{ name: '東彼杵町', pref: 'ひがしそのぎ・ちょう（長崎県）', type: 'town' },
+{ name: '川棚町', pref: 'かわたな・ちょう（長崎県）', type: 'town' },
+{ name: '波佐見町', pref: 'はさみ・ちょう（長崎県）', type: 'town' },
+{ name: '小値賀町', pref: 'おぢか・ちょう（長崎県）', type: 'town' },
+{ name: '佐々町', pref: 'さざ・ちょう（長崎県）', type: 'town' },
+{ name: '新上五島町', pref: 'しんかみごとう・ちょう（長崎県）', type: 'town' },
+
+  // 熊本県
+  { name: '熊本市', pref: 'くまもと（熊本県）', type: 'city' },
+  { name: '八代市', pref: 'やつしろ（熊本県）', type: 'city' },
+  { name: '人吉市', pref: 'ひとよし（熊本県）', type: 'city' },
+  { name: '荒尾市', pref: 'あらお（熊本県）', type: 'city' },
+  { name: '水俣市', pref: 'みなまた（熊本県）', type: 'city' },
+  { name: '玉名市', pref: 'たまな（熊本県）', type: 'city' },
+  { name: '山鹿市', pref: 'やまが（熊本県）', type: 'city' },
+  { name: '菊池市', pref: 'きくち（熊本県）', type: 'city' },
+  { name: '宇土市', pref: 'うと（熊本県）', type: 'city' },
+  { name: '上天草市', pref: 'かみあまくさ（熊本県）', type: 'city' },
+  { name: '宇城市', pref: 'うき（熊本県）', type: 'city' },
+  { name: '阿蘇市', pref: 'あそ（熊本県）', type: 'city' },
+  { name: '天草市', pref: 'あまくさ（熊本県）', type: 'city' },
+  { name: '合志市', pref: 'こうし（熊本県）', type: 'city' },
+{ name: '美里町', pref: 'みさと・まち（熊本県）', type: 'town' },
+{ name: '玉東町', pref: 'ぎょくとう・まち（熊本県）', type: 'town' },
+{ name: '南関町', pref: 'なんかん・まち（熊本県）', type: 'town' },
+{ name: '長洲町', pref: 'ながす・まち（熊本県）', type: 'town' },
+{ name: '和水町', pref: 'なごみ・まち（熊本県）', type: 'town' },
+{ name: '大津町', pref: 'おおづ・まち（熊本県）', type: 'town' },
+{ name: '菊陽町', pref: 'きくよう・まち（熊本県）', type: 'town' },
+{ name: '南小国町', pref: 'みなみおぐに・まち（熊本県）', type: 'town' },
+{ name: '小国町', pref: 'おぐに・まち（熊本県）', type: 'town' },
+{ name: '高森町', pref: 'たかもり・まち（熊本県）', type: 'town' },
+{ name: '御船町', pref: 'みふね・まち（熊本県）', type: 'town' },
+{ name: '嘉島町', pref: 'かしま・まち（熊本県）', type: 'town' },
+{ name: '益城町', pref: 'ましき・まち（熊本県）', type: 'town' },
+{ name: '甲佐町', pref: 'こうさ・まち（熊本県）', type: 'town' },
+{ name: '山都町', pref: 'やまと・ちょう（熊本県）', type: 'town' },
+{ name: '氷川町', pref: 'ひかわ・ちょう（熊本県）', type: 'town' },
+{ name: '芦北町', pref: 'あしきた・まち（熊本県）', type: 'town' },
+{ name: '津奈木町', pref: 'つなぎ・まち（熊本県）', type: 'town' },
+{ name: '錦町', pref: 'にしき・まち（熊本県）', type: 'town' },
+{ name: '多良木町', pref: 'たらぎ・まち（熊本県）', type: 'town' },
+{ name: '湯前町', pref: 'ゆのまえ・まち（熊本県）', type: 'town' },
+{ name: 'あさぎり町', pref: 'あさぎり・ちょう（熊本県）', type: 'town' },
+{ name: '苓北町', pref: 'れいほく・まち（熊本県）', type: 'town' },
+{ name: '産山村', pref: 'うぶやま（熊本県）', type: 'village' },
+{ name: '西原村', pref: 'にしはら（熊本県）', type: 'village' },
+{ name: '南阿蘇村', pref: 'みなみあそ（熊本県）', type: 'village' },
+{ name: '水上村', pref: 'みずかみ（熊本県）', type: 'village' },
+{ name: '相良村', pref: 'さがら（熊本県）', type: 'village' },
+{ name: '五木村', pref: 'いつき（熊本県）', type: 'village' },
+{ name: '山江村', pref: 'やまえ（熊本県）', type: 'village' },
+{ name: '球磨村', pref: 'くま（熊本県）', type: 'village' },
+
+  // 大分県
+  { name: '大分市', pref: 'おおいた（大分県）', type: 'city' },
+  { name: '別府市', pref: 'べっぷ（大分県）', type: 'city' },
+  { name: '中津市', pref: 'なかつ（大分県）', type: 'city' },
+  { name: '日田市', pref: 'ひた（大分県）', type: 'city' },
+  { name: '佐伯市', pref: 'さいき（大分県）', type: 'city' },
+  { name: '臼杵市', pref: 'うすき（大分県）', type: 'city' },
+  { name: '津久見市', pref: 'つくみ（大分県）', type: 'city' },
+  { name: '竹田市', pref: 'たけた（大分県）', type: 'city' },
+  { name: '豊後高田市', pref: 'ぶんごたかだ（大分県）', type: 'city' },
+  { name: '杵築市', pref: 'きつき（大分県）', type: 'city' },
+  { name: '宇佐市', pref: 'うさ（大分県）', type: 'city' },
+  { name: '豊後大野市', pref: 'ぶんごおおの（大分県）', type: 'city' },
+  { name: '由布市', pref: 'ゆふ（大分県）', type: 'city' },
+  { name: '国東市', pref: 'くにさき（大分県）', type: 'city' },
+{ name: '日出町', pref: 'ひじ・まち（大分県）', type: 'town' },
+{ name: '九重町', pref: 'ここのえ・まち（大分県）', type: 'town' },
+{ name: '玖珠町', pref: 'くす・まち（大分県）', type: 'town' },
+{ name: '姫島村', pref: 'ひめしま（大分県）', type: 'village' },
+
+  // 宮崎県
+  { name: '宮崎市', pref: 'みやざき（宮崎県）', type: 'city' },
+  { name: '都城市', pref: 'みやこのじょう（宮崎県）', type: 'city' },
+  { name: '延岡市', pref: 'のべおか（宮崎県）', type: 'city' },
+  { name: '日南市', pref: 'にちなん（宮崎県）', type: 'city' },
+  { name: '小林市', pref: 'こばやし（宮崎県）', type: 'city' },
+  { name: '日向市', pref: 'ひゅうが（宮崎県）', type: 'city' },
+  { name: '串間市', pref: 'くしま（宮崎県）', type: 'city' },
+  { name: '西都市', pref: 'さいと（宮崎県）', type: 'city' },
+  { name: 'えびの市', pref: 'えびの（宮崎県）', type: 'city' },
+{ name: '三股町', pref: 'みまた・ちょう（宮崎県）', type: 'town' },
+{ name: '高原町', pref: 'たかはる・ちょう（宮崎県）', type: 'town' },
+{ name: '国富町', pref: 'くにとみ・ちょう（宮崎県）', type: 'town' },
+{ name: '綾町', pref: 'あや・ちょう（宮崎県）', type: 'town' },
+{ name: '高鍋町', pref: 'たかなべ・ちょう（宮崎県）', type: 'town' },
+{ name: '新富町', pref: 'しんとみ・ちょう（宮崎県）', type: 'town' },
+{ name: '木城町', pref: 'きじょう・ちょう（宮崎県）', type: 'town' },
+{ name: '川南町', pref: 'かわみなみ・ちょう（宮崎県）', type: 'town' },
+{ name: '都農町', pref: 'つの・ちょう（宮崎県）', type: 'town' },
+{ name: '門川町', pref: 'かどがわ・ちょう（宮崎県）', type: 'town' },
+{ name: '美郷町', pref: 'みさと・ちょう（宮崎県）', type: 'town' },
+{ name: '高千穂町', pref: 'たかちほ・ちょう（宮崎県）', type: 'town' },
+{ name: '日之影町', pref: 'ひのかげ・ちょう（宮崎県）', type: 'town' },
+{ name: '五ヶ瀬町', pref: 'ごかせ・ちょう（宮崎県）', type: 'town' },
+{ name: '西米良村', pref: 'にしめら・そん（宮崎県）', type: 'village' },
+{ name: '諸塚村', pref: 'もろつか・そん（宮崎県）', type: 'village' },
+{ name: '椎葉村', pref: 'しいば・そん（宮崎県）', type: 'village' },
+
+  // 鹿児島県
+  { name: '鹿児島市', pref: 'かごしま（鹿児島県）', type: 'city' },
+  { name: '鹿屋市', pref: 'かのや（鹿児島県）', type: 'city' },
+  { name: '枕崎市', pref: 'まくらざき（鹿児島県）', type: 'city' },
+  { name: '阿久根市', pref: 'あくね（鹿児島県）', type: 'city' },
+  { name: '出水市', pref: 'いずみ（鹿児島県）', type: 'city' },
+  { name: '指宿市', pref: 'いぶすき（鹿児島県）', type: 'city' },
+  { name: '西之表市', pref: 'にしのおもて（鹿児島県）', type: 'city' },
+  { name: '垂水市', pref: 'たるみず（鹿児島県）', type: 'city' },
+  { name: '薩摩川内市', pref: 'さつませんだい（鹿児島県）', type: 'city' },
+  { name: '日置市', pref: 'ひおき（鹿児島県）', type: 'city' },
+  { name: '曽於市', pref: 'そお（鹿児島県）', type: 'city' },
+  { name: '霧島市', pref: 'きりしま（鹿児島県）', type: 'city' },
+  { name: 'いちき串木野市', pref: 'いちきくしきの（鹿児島県）', type: 'city' },
+  { name: '南さつま市', pref: 'みなみさつま（鹿児島県）', type: 'city' },
+  { name: '志布志市', pref: 'しぶし（鹿児島県）', type: 'city' },
+  { name: '奄美市', pref: 'あまみ（鹿児島県）', type: 'city' },
+  { name: '南九州市', pref: 'みなみきゅうしゅう（鹿児島県）', type: 'city' },
+  { name: '伊佐市', pref: 'いさ（鹿児島県）', type: 'city' },
+  { name: '姶良市', pref: 'あいら（鹿児島県）', type: 'city' },
+{ name: 'さつま町', pref: 'さつま・ちょう（鹿児島県）', type: 'town' },
+{ name: '長島町', pref: 'ながしま・ちょう（鹿児島県）', type: 'town' },
+{ name: '湧水町', pref: 'ゆうすい・ちょう（鹿児島県）', type: 'town' },
+{ name: '大崎町', pref: 'おおさき・ちょう（鹿児島県）', type: 'town' },
+{ name: '東串良町', pref: 'ひがしくしら・ちょう（鹿児島県）', type: 'town' },
+{ name: '錦江町', pref: 'きんこう・ちょう（鹿児島県）', type: 'town' },
+{ name: '南大隅町', pref: 'みなみおおすみ・ちょう（鹿児島県）', type: 'town' },
+{ name: '肝付町', pref: 'きもつき・ちょう（鹿児島県）', type: 'town' },
+{ name: '中種子町', pref: 'なかたね・ちょう（鹿児島県）', type: 'town' },
+{ name: '南種子町', pref: 'みなみたね・ちょう（鹿児島県）', type: 'town' },
+{ name: '屋久島町', pref: 'やくしま・ちょう（鹿児島県）', type: 'town' },
+{ name: '瀬戸内町', pref: 'せとうち・ちょう（鹿児島県）', type: 'town' },
+{ name: '龍郷町', pref: 'たつごう・ちょう（鹿児島県）', type: 'town' },
+{ name: '喜界町', pref: 'きかい・ちょう（鹿児島県）', type: 'town' },
+{ name: '徳之島町', pref: 'とくのしま・ちょう（鹿児島県）', type: 'town' },
+{ name: '天城町', pref: 'あまぎ・ちょう（鹿児島県）', type: 'town' },
+{ name: '伊仙町', pref: 'いせん・ちょう（鹿児島県）', type: 'town' },
+{ name: '和泊町', pref: 'わどまり・ちょう（鹿児島県）', type: 'town' },
+{ name: '知名町', pref: 'ちな・ちょう（鹿児島県）', type: 'town' },
+{ name: '与論町', pref: 'よろん・ちょう（鹿児島県）', type: 'town' },
+{ name: '三島村', pref: 'みしま（鹿児島県）', type: 'village' },
+{ name: '十島村', pref: 'としま（鹿児島県）', type: 'village' },
+{ name: '大和村', pref: 'やまと・そん（鹿児島県）', type: 'village' },
+{ name: '宇検村', pref: 'うけん・そん（鹿児島県）', type: 'village' },
+
+  // 沖縄県
+  { name: '那覇市', pref: 'なは（沖縄県）', type: 'city' },
+  { name: '宜野湾市', pref: 'ぎのわん（沖縄県）', type: 'city' },
+  { name: '石垣市', pref: 'いしがき（沖縄県）', type: 'city' },
+  { name: '浦添市', pref: 'うらそえ（沖縄県）', type: 'city' },
+  { name: '名護市', pref: 'なご（沖縄県）', type: 'city' },
+  { name: '糸満市', pref: 'いとまん（沖縄県）', type: 'city' },
+  { name: '沖縄市', pref: 'おきなわ（沖縄県）', type: 'city' },
+  { name: '豊見城市', pref: 'とみぐすく（沖縄県）', type: 'city' },
+  { name: 'うるま市', pref: 'うるま（沖縄県）', type: 'city' },
+  { name: '宮古島市', pref: 'みやこじま（沖縄県）', type: 'city' },
+  { name: '南城市', pref: 'なんじょう（沖縄県）', type: 'city' },
+  { name: '本部町', pref: 'もとぶ・ちょう（沖縄県）', type: 'town' },
+{ name: '金武町', pref: 'きん・ちょう（沖縄県）', type: 'town' },
+{ name: '嘉手納町', pref: 'かでな・ちょう（沖縄県）', type: 'town' },
+{ name: '北谷町', pref: 'ちゃたん・ちょう（沖縄県）', type: 'town' },
+{ name: '西原町', pref: 'にしはら・ちょう（沖縄県）', type: 'town' },
+{ name: '与那原町', pref: 'よなばる・ちょう（沖縄県）', type: 'town' },
+{ name: '南風原町', pref: 'はえばる・ちょう（沖縄県）', type: 'town' },
+{ name: '久米島町', pref: 'くめじま・ちょう（沖縄県）', type: 'town' },
+{ name: '八重瀬町', pref: 'やえせ・ちょう（沖縄県）', type: 'town' },
+{ name: '竹富町', pref: 'たけとみ・ちょう（沖縄県）', type: 'town' },
+{ name: '与那国町', pref: 'よなぐに・ちょう（沖縄県）', type: 'town' },
+{ name: '国頭村', pref: 'くにがみ・そん（沖縄県）', type: 'village' },
+{ name: '大宜味村', pref: 'おおぎみ・そん（沖縄県）', type: 'village' },
+{ name: '東村', pref: 'ひがし・そん（沖縄県）', type: 'village' },
+{ name: '今帰仁村', pref: 'なきじん・そん（沖縄県）', type: 'village' },
+{ name: '恩納村', pref: 'おんな・そん（沖縄県）', type: 'village' },
+{ name: '宜野座村', pref: 'ぎのざ・そん（沖縄県）', type: 'village' },
+{ name: '伊江村', pref: 'いえ・そん（沖縄県）', type: 'village' },
+{ name: '読谷村', pref: 'よみたん・そん（沖縄県）', type: 'village' },
+{ name: '北中城村', pref: 'きたなかぐすく・そん（沖縄県）', type: 'village' },
+{ name: '中城村', pref: 'なかぐすく・そん（沖縄県）', type: 'village' },
+{ name: '渡嘉敷村', pref: 'とかしき・そん（沖縄県）', type: 'village' },
+{ name: '座間味村', pref: 'ざまみ・そん（沖縄県）', type: 'village' },
+{ name: '粟国村', pref: 'あぐに・そん（沖縄県）', type: 'village' },
+{ name: '渡名喜村', pref: 'となき・そん（沖縄県）', type: 'village' },
+{ name: '南大東村', pref: 'みなみだいとう・そん（沖縄県）', type: 'village' },
+{ name: '北大東村', pref: 'きただいとう・そん（沖縄県）', type: 'village' },
+{ name: '伊平屋村', pref: 'いへや・そん（沖縄県）', type: 'village' },
+{ name: '伊是名村', pref: 'いぜな・そん（沖縄県）', type: 'village' },
+{ name: '多良間村', pref: 'たらま・そん（沖縄県）', type: 'village' }
+    ];
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
     }
-    return array;
-  }
 
-  let shuffledData = [];
-  let currentIndex = 0;
-  let answered = false;
-  const quizContainer = document.getElementById('quiz');
+    let filteredData = [];
+    let currentIndex = 0;
+    let answered = false;
 
-  function getSelectedTypes() {
-    return Array.from(document.querySelectorAll('#typeSelector input:checked')).map(cb => cb.value);
-  }
+    const quizContainer = document.getElementById('quiz');
 
-  function getFilteredData() {
-    const selected = getSelectedTypes();
-    return shuffle(data.filter(item => selected.includes(item.type)));
-  }
+    function getSelectedTypes() {
+      return Array.from(document.querySelectorAll('#typeSelector input:checked')).map(cb => cb.value);
+    }
 
-  function showQuestion(index) {
-    quizContainer.innerHTML = '';
-    answered = false;
-    const item = shuffledData[index];
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
-      <div class="name">${item.name}</div>
-      <div class="pref">${item.pref}</div>
-    `;
-    quizContainer.appendChild(card);
-  }
+    function filterData() {
+      const selectedTypes = getSelectedTypes();
+      return shuffle(data.filter(item => selectedTypes.includes(item.type)));
+    }
 
-  function startQuiz() {
-    shuffledData = getFilteredData();
-    currentIndex = 0;
-    if (shuffledData.length > 0) showQuestion(currentIndex);
-    else quizContainer.innerHTML = '<p>表示する市町村がありません。</p>';
-  }
+    function showCard(index) {
+      quizContainer.innerHTML = '';
+      answered = false;
 
-  document.body.addEventListener('click', (e) => {
-    if (e.target.closest('#typeSelector')) return; // チェックボックス押下は無視
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL') return;
+      const item = filteredData[index];
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="name">${item.name}</div>
+        <div class="pref">${item.pref}</div>
+      `;
+      quizContainer.appendChild(card);
+    }
 
-    const pref = document.querySelector('.pref');
-    if (!pref) return;
+    function handleTap() {
+      const pref = document.querySelector('.pref');
 
-    if (!answered) {
-      pref.style.display = 'block';
-      answered = true;
-    } else {
-      currentIndex++;
-      if (currentIndex < shuffledData.length) {
-        showQuestion(currentIndex);
+      if (!answered) {
+        if (pref) pref.style.display = 'block';
+        answered = true;
       } else {
-        quizContainer.innerHTML = '<p style="font-size:1.4em;">🎉 クイズ終了！</p>';
+        currentIndex++;
+        if (currentIndex < filteredData.length) {
+          showCard(currentIndex);
+        } else {
+          quizContainer.innerHTML = '<p>📘 単語帳は終了しました！</p>';
+        }
       }
     }
-  });
 
-  document.querySelectorAll('#typeSelector input').forEach(cb => {
-    cb.addEventListener('change', startQuiz);
-  });
+    document.querySelectorAll('#typeSelector input').forEach(cb => {
+      cb.addEventListener('change', () => {
+        startQuiz();
+      });
+    });
 
-  startQuiz();
+    function startQuiz() {
+      filteredData = filterData();
+      currentIndex = 0;
+      if (filteredData.length > 0) {
+        showCard(currentIndex);
+      } else {
+        quizContainer.innerHTML = '<p>⚠️ 該当するデータがありません</p>';
+      }
+    }
+
+    // タップイベント（画面全体）
+    document.body.addEventListener('click', (e) => {
+      // チェックボックスの操作は除外
+      if (e.target.tagName === 'INPUT') return;
+      handleTap();
+    });
+
+    // 初回表示
+    startQuiz();
   </script>
 </body>
 </html>
-
